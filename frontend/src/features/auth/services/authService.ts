@@ -11,6 +11,18 @@ export const authService = {
     return data
   },
 
+  async signInWithMagicLink(email: string, redirectTo?: string) {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectTo,
+      },
+    })
+
+    if (error) throw error
+    return data
+  },
+
   async signUp(email: string, password: string, userData: Record<string, any>) {
     const { data, error } = await supabase.auth.signUp({
       email,

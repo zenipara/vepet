@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -7,9 +7,10 @@ import { authService } from '@/features/auth/services/authService'
 import { PawPrint } from 'lucide-react'
 
 export const LoginPage = () => {
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,6 +26,7 @@ export const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccessMessage('')
     setLoading(true)
 
     try {
@@ -34,6 +36,29 @@ export const LoginPage = () => {
       setError(err.message || 'Login gagal. Cek email dan password Anda.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleMagicLink = async () => {
+    setError('')
+    setSuccessMessage('')
+
+    if (!formData.email) {
+      setError('Masukkan email untuk menerima link masuk.')
+      return
+    }
+
+    try {
+      setMagicLinkLoading(true)
+      const redirectBase = `${window.location.origin}${import.meta.env.BASE_URL}`
+      const redirectTo = new URL('login', redirectBase).toString()
+
+      await authService.signInWithMagicLink(formData.email, redirectTo)
+      setSuccessMessage('Link masuk telah dikirim. Silakan cek email Anda.')
+    } catch (err: any) {
+      setError(err.message || 'Gagal mengirim link masuk. Coba lagi.')
+    } finally {
+      setMagicLinkLoading(false)
     }
   }
 
@@ -51,6 +76,12 @@ export const LoginPage = () => {
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            {successMessage}
           </div>
         )}
 
@@ -76,6 +107,16 @@ export const LoginPage = () => {
 
           <Button type="submit" className="w-full" loading={loading}>
             Masuk
+          </Button>
+
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            loading={magicLinkLoading}
+            onClick={handleMagicLink}
+          >
+            Kirim Link Masuk via Email
           </Button>
         </form>
       </Card>
