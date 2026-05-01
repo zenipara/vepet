@@ -20,6 +20,12 @@ import {
   Rabbit,
   Sparkles,
   Heart,
+  Syringe,
+  Pill,
+  Activity,
+  Smile,
+  Zap,
+  Shield,
 } from 'lucide-react'
 import { Accordion } from '@/components/ui/Accordion'
 
@@ -127,6 +133,76 @@ export const HomePage = () => {
       petType: 'bird',
       petIcon: Bird,
       emoji: '🦜',
+    },
+  ]
+
+  const petSpecialties = [
+    {
+      petType: 'Anjing',
+      petIcon: Dog,
+      color: 'amber',
+      specialties: [
+        { icon: Syringe, label: 'Vaksinasi Lengkap' },
+        { icon: Smile, label: 'Perawatan Gigi' },
+        { icon: Activity, label: 'Training Perilaku' },
+        { icon: Zap, label: 'Grooming & Sterilisasi' },
+      ],
+    },
+    {
+      petType: 'Kucing',
+      petIcon: Cat,
+      color: 'orange',
+      specialties: [
+        { icon: Pill, label: 'Vaksinasi & Imunitas' },
+        { icon: Smile, label: 'Dental Cleaning' },
+        { icon: HeartPulse, label: 'Kesehatan Ginjal' },
+        { icon: Zap, label: 'Sterilisasi Aman' },
+      ],
+    },
+    {
+      petType: 'Kelinci',
+      petIcon: Rabbit,
+      color: 'pink',
+      specialties: [
+        { icon: HeartPulse, label: 'Nutrisi Optimal' },
+        { icon: Smile, label: 'Perawatan Gigi' },
+        { icon: Shield, label: 'Vaksinasi Khusus' },
+        { icon: Pill, label: 'Diet Management' },
+      ],
+    },
+    {
+      petType: 'Burung',
+      petIcon: Bird,
+      color: 'cyan',
+      specialties: [
+        { icon: Activity, label: 'Check-up Rutin' },
+        { icon: Pill, label: 'Nutrisi Burung' },
+        { icon: Shield, label: 'Vaksin Unggas' },
+        { icon: Zap, label: 'Perawatan Sayap' },
+      ],
+    },
+  ]
+
+  const petBenefits = [
+    {
+      icon: ShieldCheck,
+      title: 'Pencegahan Penyakit',
+      desc: 'Program vaksinasi terencana dan monitoring rutin untuk menjaga kesehatan optimal hewan kesayangan Anda.',
+    },
+    {
+      icon: Stethoscope,
+      title: 'Dokter Berpengalaman',
+      desc: 'Tim dokter hewan bersertifikat dengan pengalaman menangani berbagai jenis hewan dan kondisi kesehatan.',
+    },
+    {
+      icon: HeartPulse,
+      title: 'Perawatan Holistik',
+      desc: 'Dari kesehatan fisik hingga mental, kami perhatikan setiap aspek kesejahteraan hewan peliharaan Anda.',
+    },
+    {
+      icon: CalendarDays,
+      title: 'Follow-up Terjadwal',
+      desc: 'Sistem pengingat otomatis untuk vaksinasi, check-up, dan perawatan berkala hewan Anda.',
     },
   ]
 
@@ -358,6 +434,82 @@ export const HomePage = () => {
                 <div className="transform translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
                   <Badge variant="success" className="bg-emerald-500 text-white border-0">Didukung ✓</Badge>
                 </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Pet Care Specialties */}
+      <section className="public-reveal public-section public-divider bg-white">
+        <div className="mb-12 text-center">
+          <Badge variant="info" className="mx-auto">Spesialisasi Perawatan</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Keahlian perawatan untuk setiap jenis hewan</h2>
+          <p className="mx-auto mt-3 max-w-3xl text-slate-600">VetCare menyediakan layanan spesifik yang disesuaikan dengan kebutuhan kesehatan unik setiap jenis hewan peliharaan</p>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-2">
+          {petSpecialties.map(({ petType, petIcon: PetIcon, color, specialties }) => {
+            const colorMap = {
+              amber: 'from-amber-50 to-amber-100/50 border-amber-200',
+              orange: 'from-orange-50 to-orange-100/50 border-orange-200',
+              pink: 'from-pink-50 to-pink-100/50 border-pink-200',
+              cyan: 'from-cyan-50 to-cyan-100/50 border-cyan-200',
+            }
+            const bgGradient = colorMap[color as keyof typeof colorMap]
+
+            return (
+              <Card key={petType} className={`group border bg-gradient-to-br ${bgGradient} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}>
+                <div className="space-y-6 p-8">
+                  {/* Header with pet icon */}
+                  <div className="flex items-center gap-4">
+                    <div className={`rounded-2xl bg-white p-3 text-${color}-600`}>
+                      <PetIcon className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-slate-900">{petType}</h3>
+                  </div>
+
+                  {/* Specialties grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {specialties.map(({ icon: SpecIcon, label }) => (
+                      <div key={label} className="flex flex-col items-center gap-2 rounded-xl bg-white/60 p-3 text-center transition-all group-hover:bg-white">
+                        <SpecIcon className="h-5 w-5 text-emerald-600" />
+                        <span className="text-xs font-medium text-slate-700">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* Pet Health Benefits */}
+      <section className="public-reveal public-section public-divider bg-gradient-to-b from-emerald-50/30 to-slate-50">
+        <div className="mb-12 text-center">
+          <Badge variant="success" className="mx-auto">Komitmen Kesehatan Hewan</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Kenapa pemilik hewan mempercayai VetCare</h2>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          {petBenefits.map(({ icon: BenIcon, title, desc }) => (
+            <Card key={title} className="group border-slate-100 bg-white hover:shadow-xl hover:-translate-y-2 overflow-hidden transition-all duration-300">
+              <div className="space-y-4 p-8 relative">
+                {/* Background accent on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                
+                {/* Icon */}
+                <div className="inline-flex rounded-2xl bg-emerald-100 p-3 text-emerald-700 group-hover:bg-emerald-200 transition-colors">
+                  <BenIcon className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                </div>
+
+                {/* Content */}
+                <h3 className="text-lg font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">{title}</h3>
+                <p className="leading-7 text-slate-600 group-hover:text-slate-700 transition-colors">{desc}</p>
+
+                {/* Floating accent */}
+                <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-200 rounded-full opacity-0 group-hover:opacity-10 transition-opacity" />
               </div>
             </Card>
           ))}
