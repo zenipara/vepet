@@ -1,4 +1,4 @@
-import { ClinicLayout } from '@/app/layouts/ClinicLayout'
+
 import { Card } from '@/components/ui/Card'
 import { Calendar, Users, FileText, AlertCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -36,7 +36,7 @@ export const ClinicPage = () => {
   ]
 
   return (
-    <ClinicLayout>
+    
       <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dasbor Klinik</h1>
@@ -104,6 +104,6 @@ export const ClinicPage = () => {
           </div>
         </Card>
       </div>
-    </ClinicLayout>
+    
   )
 }

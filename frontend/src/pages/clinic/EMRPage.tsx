@@ -1,4 +1,4 @@
-import { ClinicLayout } from '@/app/layouts/ClinicLayout'
+
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -45,7 +45,7 @@ export const EMRPage = () => {
   const [newRecord, setNewRecord] = useState(false)
 
   return (
-    <ClinicLayout>
+    
       <div className="p-6">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -229,7 +229,7 @@ export const EMRPage = () => {
           )}
         </div>
       </div>
-    </ClinicLayout>
+    
   )
 }
 

@@ -1,4 +1,4 @@
-import { AdminLayout } from '@/app/layouts/AdminLayout'
+
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -174,7 +174,7 @@ export const CMSPage = () => {
   }, [])
 
   return (
-    <AdminLayout>
+    
       <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">CMS & Konten</h1>
@@ -572,6 +572,6 @@ export const CMSPage = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    
   )
 }

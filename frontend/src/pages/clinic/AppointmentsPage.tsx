@@ -1,4 +1,4 @@
-import { ClinicLayout } from '@/app/layouts/ClinicLayout'
+
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -86,7 +86,7 @@ export const AppointmentsPage = () => {
   }
 
   return (
-    <ClinicLayout>
+    
       <div className="p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Janji Temu Hari Ini</h1>
@@ -234,6 +234,6 @@ export const AppointmentsPage = () => {
           )}
         </div>
       </div>
-    </ClinicLayout>
+    
   )
 }
