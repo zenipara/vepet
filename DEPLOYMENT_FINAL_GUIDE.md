@@ -43,7 +43,9 @@ Complete migration from BaaS-based docs to custom backend deployment using Rende
 
 ✅ **Code**: Pushed to GitHub (TypeScript checks present)  
 ✅ **Workflow**: `.github/workflows/deploy.yml` handles frontend build & pages deploy  
-✅ **Migrations**: SQL files present in `supabase/migrations/` for database schema (can be applied to Render Postgres)
+✅ **Migrations**: SQL files present in `supabase/migrations/` for database schema (apply to Render PostgreSQL)
+✅ **Backend API**: Node.js Express server ready at `backend/`
+✅ **Realtime Service**: Go WebSocket server ready at `services/realtime/`
 
 ⏳ **Pending**: Configure Render services and update CI to run any DB migration tool you choose (psql, golang-migrate, etc.).
 
