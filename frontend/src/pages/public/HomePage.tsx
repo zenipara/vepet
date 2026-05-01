@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
+import SEO from '@/components/seo/SEO'
 import {
   ArrowRight,
   CalendarDays,
@@ -153,6 +154,10 @@ export const HomePage = () => {
 
   return (
     <div className="bg-slate-50 text-slate-900">
+      <SEO
+        title="VetCare — Platform Klinik Hewan"
+        description="Satu platform untuk booking, rekam medis, dan operasional klinik hewan."
+      />
       <section className="relative isolate overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-teal-900 text-white">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-emerald-400/30 blur-3xl" />
@@ -257,7 +262,7 @@ export const HomePage = () => {
 
         <div className="grid gap-6 sm:grid-cols-3">
           {testimonials.map((t) => (
-            <Card key={t.name} className="h-full border-slate-200 bg-white hover:shadow-lg hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-emerald-200">
+            <Card key={t.name} className="public-surface-card h-full border-slate-200 hover:shadow-lg hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-emerald-200">
               <div className="space-y-3 p-4">
                 <p className="leading-7 text-slate-700">“{t.text}”</p>
                 <div className="mt-2 flex items-center justify-between">
@@ -284,7 +289,7 @@ export const HomePage = () => {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           {trusted.map((name) => (
-            <div key={name} className="flex items-center justify-center rounded-lg border border-slate-200 bg-white p-3 text-center text-sm text-slate-700">
+            <div key={name} className="public-surface-card flex items-center justify-center rounded-lg border border-slate-200 p-3 text-center text-sm font-medium text-slate-700">
               {name}
             </div>
           ))}

@@ -1,6 +1,8 @@
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 
+import SEO from '@/components/seo/SEO'
+
 const faqs = [
   {
     q: 'Bagaimana cara mendaftar klinik?',
@@ -18,22 +20,25 @@ const faqs = [
 
 export const SupportPage = () => {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-20">
-      <Badge variant="secondary">Bantuan & Dukungan</Badge>
+    <div className="public-page-shell">
+      <div className="public-page-container">
+        <SEO title="Bantuan — VetCare" description="Pusat bantuan dan FAQ untuk pengguna VetCare." />
+        <Badge variant="secondary">Bantuan & Dukungan</Badge>
 
-      <div className="mt-6 space-y-6">
-        <h1 className="text-2xl font-bold">Pusat bantuan</h1>
-        <p className="text-slate-700">Temukan jawaban cepat untuk pertanyaan umum tentang penggunaan VetCare.</p>
+        <div className="mt-6 space-y-6">
+          <h1 className="public-page-headline">Pusat bantuan</h1>
+          <p className="public-page-subtitle">Temukan jawaban cepat untuk pertanyaan umum tentang penggunaan VetCare.</p>
 
-        <div className="grid gap-4">
-          {faqs.map((f) => (
-            <Card key={f.q} className="border-slate-200 bg-white">
-              <div className="p-4">
-                <div className="font-semibold">{f.q}</div>
-                <div className="mt-2 text-slate-700">{f.a}</div>
-              </div>
-            </Card>
-          ))}
+          <div className="grid gap-4">
+            {faqs.map((f) => (
+              <Card key={f.q} className="public-surface-card">
+                <div className="p-4">
+                  <div className="font-semibold text-slate-900">{f.q}</div>
+                  <div className="mt-2 text-slate-700">{f.a}</div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>
