@@ -116,7 +116,6 @@ export const HomePage = () => {
       text: 'Integrasi rekam medis dan booking membuat alur kerja tim kami jauh lebih cepat.',
       petType: 'dog',
       petIcon: Dog,
-      emoji: '🐕‍🦺',
     },
     {
       name: 'Budi',
@@ -124,7 +123,6 @@ export const HomePage = () => {
       text: 'Mudah mendaftar dan melihat riwayat kesehatan kucing saya dalam satu tempat.',
       petType: 'cat',
       petIcon: Cat,
-      emoji: '😺',
     },
     {
       name: 'Sari',
@@ -132,7 +130,6 @@ export const HomePage = () => {
       text: 'Tampilan dashboardnya intuitif — memudahkan penjadwalan dan follow-up.',
       petType: 'bird',
       petIcon: Bird,
-      emoji: '🦜',
     },
   ]
 
@@ -535,7 +532,9 @@ export const HomePage = () => {
                       <PetIcon className="h-4 w-4 text-emerald-600 pet-bounce" />
                       <span className="text-xs font-semibold text-emerald-700 capitalize">{t.petType}</span>
                     </div>
-                    <span className="text-2xl group-hover:scale-125 transition-transform">{t.emoji}</span>
+                    <div className="rounded-2xl bg-emerald-50 p-2 text-emerald-600 shadow-sm transition-transform group-hover:scale-110">
+                      <PetIcon className="h-6 w-6" />
+                    </div>
                   </div>
 
                   {/* Rating stars */}
