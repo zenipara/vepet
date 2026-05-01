@@ -1,0 +1,15 @@
+*.o
+*.a
+*.so
+\.exe
+\.exe~
+\.dll
+\.so
+\.dylib
+/dist/
+vendor/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
