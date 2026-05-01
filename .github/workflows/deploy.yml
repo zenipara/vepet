@@ -37,8 +37,14 @@ jobs:
         run: echo "⚠️ SUPABASE_DB_URL is not set. Skipping database migrations for this deploy."
 
       - name: Deploy database migrations to Supabase
+        id: db_migrate
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && env.SUPABASE_DB_URL != ''
+        continue-on-error: true
         run: bash scripts/deploy-supabase-db.sh
+
+      - name: Warn when database migration fails
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.db_migrate.outcome == 'failure'
+        run: echo "⚠️ Database migration failed (likely network/endpoint issue). Continuing frontend deploy to GitHub Pages."
 
       - name: Install dependencies
         working-directory: ./frontend
