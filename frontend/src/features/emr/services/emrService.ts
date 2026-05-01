@@ -65,6 +65,8 @@ export const emrService = {
     quantity?: number
     unit?: string
     price?: number
+    product_id?: string
+    batch_id?: string
   }): Promise<Treatment> {
     const { supabase } = await import('@/lib/supabaseClient')
     const { data, error } = await supabase
@@ -74,6 +76,16 @@ export const emrService = {
       .single()
 
     if (error) throw error
+    // Auto-deduct inventory if product_id provided
+    try {
+      if (payload.product_id && payload.quantity && payload.quantity > 0) {
+        const { inventoryService } = await import('@/features/inventory/services/inventoryService')
+        await inventoryService.consumeFromBatch(payload.product_id, payload.batch_id, payload.quantity, { id: data.id, type: 'treatment' })
+      }
+    } catch (err) {
+      console.error('Gagal auto-deduct inventory for treatment:', err)
+    }
+
     return data
   },
 
@@ -84,6 +96,8 @@ export const emrService = {
     frequency: string
     duration?: string
     notes?: string
+    product_id?: string
+    batch_id?: string
   }): Promise<Prescription> {
     const { supabase } = await import('@/lib/supabaseClient')
     const { data, error } = await supabase
@@ -93,6 +107,18 @@ export const emrService = {
       .single()
 
     if (error) throw error
+
+    // Auto-deduct inventory if product_id provided
+    try {
+      if ((payload as any).product_id) {
+        const qty = 1 // default consume 1 unit per prescription unless specified elsewhere
+        const { inventoryService } = await import('@/features/inventory/services/inventoryService')
+        await inventoryService.consumeFromBatch((payload as any).product_id, (payload as any).batch_id, qty, { id: data.id, type: 'prescription' })
+      }
+    } catch (err) {
+      console.error('Gagal auto-deduct inventory for prescription:', err)
+    }
+
     return data
   },
 }

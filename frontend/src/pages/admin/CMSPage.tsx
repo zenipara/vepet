@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Search, Plus, Edit2, Trash2, Eye, EyeOff, Calendar } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { cmsService } from '@/features/cms/services/cmsService'
 
 interface BlogPost {
   id: string
@@ -106,18 +107,32 @@ const statusColors = {
 export const CMSPage = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts)
   const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials)
-  const [clinicInfo, setClinicInfo] = useState<ClinicInfo>({
-    name: 'VetCare Clinic',
-    address: 'Jl. Hewan No. 123, Jakarta',
-    phone: '+62 21 1234 5678',
-    hours: '08:00 - 17:00 (Senin - Jumat)',
-    description: 'Klinik hewan terpercaya dengan dokter profesional',
-  })
+  const [clinicInfo, setClinicInfo] = useState<ClinicInfo | null>(null)
+  const [editingClinic, setEditingClinic] = useState(false)
+  const [savingClinic, setSavingClinic] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
   const filteredPosts = blogPosts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()),
   )
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await cmsService.getClinicProfile()
+        if (data) setClinicInfo({
+          name: data.name || '',
+          address: data.address || '',
+          phone: data.phone || '',
+          hours: data.hours || '',
+          description: data.description || '',
+        })
+      } catch (err) {
+        console.error('Gagal memuat profil klinik:', err)
+      }
+    }
+    loadProfile()
+  }, [])
 
   return (
     <AdminLayout>
@@ -258,49 +273,98 @@ export const CMSPage = () => {
             <Card className="p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-6">Informasi Klinik</h3>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nama Klinik
-                  </label>
-                  <Input value={clinicInfo.name} readOnly className="bg-gray-50" />
-                </div>
+              {!clinicInfo ? (
+                <div className="text-gray-600">Memuat...</div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nama Klinik
+                    </label>
+                    <Input
+                      value={clinicInfo.name}
+                      onChange={e => setClinicInfo({ ...clinicInfo, name: e.target.value })}
+                      readOnly={!editingClinic}
+                      className={editingClinic ? '' : 'bg-gray-50'}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Alamat
-                  </label>
-                  <Input value={clinicInfo.address} readOnly className="bg-gray-50" />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Alamat
+                    </label>
+                    <Input
+                      value={clinicInfo.address}
+                      onChange={e => setClinicInfo({ ...clinicInfo, address: e.target.value })}
+                      readOnly={!editingClinic}
+                      className={editingClinic ? '' : 'bg-gray-50'}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nomor Telepon
-                  </label>
-                  <Input value={clinicInfo.phone} readOnly className="bg-gray-50" />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nomor Telepon
+                    </label>
+                    <Input
+                      value={clinicInfo.phone}
+                      onChange={e => setClinicInfo({ ...clinicInfo, phone: e.target.value })}
+                      readOnly={!editingClinic}
+                      className={editingClinic ? '' : 'bg-gray-50'}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Jam Operasional
-                  </label>
-                  <Input value={clinicInfo.hours} readOnly className="bg-gray-50" />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Jam Operasional
+                    </label>
+                    <Input
+                      value={clinicInfo.hours}
+                      onChange={e => setClinicInfo({ ...clinicInfo, hours: e.target.value })}
+                      readOnly={!editingClinic}
+                      className={editingClinic ? '' : 'bg-gray-50'}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Deskripsi
-                  </label>
-                  <textarea
-                    value={clinicInfo.description}
-                    readOnly
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
-                    rows={4}
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Deskripsi
+                    </label>
+                    <textarea
+                      value={clinicInfo.description}
+                      onChange={e => setClinicInfo({ ...clinicInfo, description: e.target.value })}
+                      readOnly={!editingClinic}
+                      className={`w-full px-4 py-2 border border-gray-300 rounded-lg ${editingClinic ? '' : 'bg-gray-50 text-gray-700'}`}
+                      rows={4}
+                    />
+                  </div>
 
-                <Button className="w-full">Edit Informasi Klinik</Button>
-              </div>
+                  <div className="flex gap-3">
+                    {!editingClinic ? (
+                      <Button onClick={() => setEditingClinic(true)}>Edit Informasi Klinik</Button>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={async () => {
+                            setSavingClinic(true)
+                            try {
+                              await cmsService.updateClinicProfile(clinicInfo as any)
+                              setEditingClinic(false)
+                            } catch (err) {
+                              console.error('Gagal menyimpan profil klinik:', err)
+                            } finally {
+                              setSavingClinic(false)
+                            }
+                          }}
+                          disabled={savingClinic}
+                        >
+                          Simpan
+                        </Button>
+                        <Button variant="secondary" onClick={() => setEditingClinic(false)}>Batal</Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </Card>
           </TabsContent>
         </Tabs>

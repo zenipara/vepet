@@ -16,6 +16,17 @@ export const useInventory = (): UseInventoryReturn => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // helper to fetch batches for a product
+  const getBatchesForProduct = async (productId: string) => {
+    try {
+      const data = await inventoryService.getBatches(productId)
+      return data
+    } catch (err) {
+      console.error('Error fetching batches for product', err)
+      return []
+    }
+  }
+
   const refetch = async () => {
     setLoading(true)
     setError(null)

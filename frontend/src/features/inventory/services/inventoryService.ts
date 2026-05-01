@@ -87,4 +87,79 @@ export const inventoryService = {
     if (error) throw error
     return data || []
   },
+
+  async createBatch(productId: string, payload: { batch_number: string; quantity: number; expiry_date: string; received_date?: string }) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('batches')
+      .insert({ product_id: productId, ...payload })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  async recordStockMovement(payload: {
+    product_id: string
+    batch_id?: string
+    type: 'in' | 'out' | 'adjustment' | 'expired'
+    quantity: number
+    reference_id?: string
+    reference_type?: string
+    notes?: string
+  }) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('stock_movements')
+      .insert(payload)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  // Consume quantity from a batch and update product stock atomically (best-effort)
+  async consumeFromBatch(productId: string, batchId: string | undefined, quantity: number, reference?: { id?: string; type?: string }) {
+    const { supabase } = await import('@/lib/supabaseClient')
+
+    // Decrease batch quantity if batch provided
+    if (batchId) {
+      const { error: batchError } = await supabase
+        .from('batches')
+        .update({ quantity: supabase.raw('GREATEST(quantity - ?, 0)', [quantity]) })
+        .eq('id', batchId)
+
+      if (batchError) throw batchError
+    }
+
+    // Decrease product stock
+    const { data: product } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', productId)
+      .single()
+
+    if (!product) throw new Error('Produk tidak ditemukan')
+
+    const newQty = Math.max((product.stock_qty || 0) - quantity, 0)
+    const { error: prodError } = await supabase
+      .from('products')
+      .update({ stock_qty: newQty, updated_at: new Date().toISOString() })
+      .eq('id', productId)
+
+    if (prodError) throw prodError
+
+    // Record movement
+    await inventoryService.recordStockMovement({
+      product_id: productId,
+      batch_id: batchId,
+      type: 'out',
+      quantity,
+      reference_id: reference?.id,
+      reference_type: reference?.type,
+      notes: reference ? `Auto-deduct for ${reference.type || 'unknown'}` : 'Auto-deduct',
+    })
+  },
 }

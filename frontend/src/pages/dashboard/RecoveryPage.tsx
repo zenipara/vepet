@@ -1,49 +1,16 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
-import type { InpatientCase, CaseUpdate } from '@/types/medical'
+import { useInpatientRealtimeCase } from '@/features/inpatient/hooks/useInpatientRealtimeCase'
+import { RecoveryTimeline } from '@/features/inpatient/components/RecoveryTimeline'
+import { CasePhotoGallery } from '@/features/inpatient/components/CasePhotoGallery'
 
 export const RecoveryPage = () => {
   const { caseId } = useParams()
-  const [inpatientCase, setInpatientCase] = useState<InpatientCase | null>(null)
-  const [updates, setUpdates] = useState<CaseUpdate[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!caseId) return
-
-    const fetchData = async () => {
-      try {
-        const { supabase } = await import('@/lib/supabaseClient')
-        
-        // Fetch inpatient case
-        const { data: caseData } = await supabase
-          .from('inpatient_cases')
-          .select('*')
-          .eq('id', caseId)
-          .single()
-
-        setInpatientCase(caseData)
-
-        // Fetch case updates (will implement realtime later)
-        const { data: updatesData } = await supabase
-          .from('case_updates')
-          .select('*')
-          .eq('case_id', caseId)
-          .order('created_at', { ascending: false })
-
-        setUpdates(updatesData || [])
-      } catch (error) {
-        console.error('Error fetching recovery data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [caseId])
+  const { caseDetails: inpatientCase, updates, photos, loading, error, addUpdate, uploadPhoto } = useInpatientRealtimeCase(caseId || '')
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
 
   if (loading) {
     return (
@@ -53,8 +20,25 @@ export const RecoveryPage = () => {
     )
   }
 
-  if (!inpatientCase) {
+  if (error) {
+    return (
+      <div className="text-center text-red-600 py-12">
+        <p>Terjadi kesalahan: {error}</p>
+      </div>
+    )
+  }
+
+  if (!caseId || !inpatientCase) {
     return <div className="text-center text-gray-600 py-12">Data rawat inap tidak ditemukan</div>
+  }
+
+  const handleUploadPhoto = async (file: File, caption: string) => {
+    setUploadingPhoto(true)
+    try {
+      await uploadPhoto(file, caption)
+    } finally {
+      setUploadingPhoto(false)
+    }
   }
 
   const statusLabel = {
@@ -76,68 +60,87 @@ export const RecoveryPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Journey Pemulihan</h1>
+      <h1 className="text-3xl font-bold mb-8">🏥 Journey Pemulihan</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-1">
-          <h3 className="font-bold mb-4">Informasi Rawat Inap</h3>
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs text-gray-600">Status</p>
-              <Badge>{statusLabel}</Badge>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600">Tingkat Keparahan</p>
-              <Badge>{severityLabel}</Badge>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600">Tanggal Masuk</p>
-              <p className="font-medium">{admitDate}</p>
-            </div>
-            {inpatientCase.cage_number && (
-              <div>
-                <p className="text-xs text-gray-600">Nomor Kandang</p>
-                <p className="font-medium">{inpatientCase.cage_number}</p>
-              </div>
-            )}
-          </div>
-        </Card>
-
-        <div className="lg:col-span-2">
-          <h3 className="font-bold text-lg mb-4">Perkembangan Pemulihan</h3>
-          {updates.length === 0 ? (
-            <Card className="text-center text-gray-600 py-8">
-              Belum ada update pemulihan
-            </Card>
-          ) : (
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar - Case Info */}
+        <div className="lg:col-span-1 space-y-4">
+          <Card>
+            <h3 className="font-bold mb-4 text-lg">📋 Informasi Rawat Inap</h3>
             <div className="space-y-4">
-              {updates.map(update => {
-                const updateDate = new Date(update.created_at).toLocaleString('id-ID')
-                return (
-                  <Card key={update.id}>
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-bold">{update.title}</h4>
-                      <Badge>{update.stage}</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">{updateDate}</p>
-                    <p className="text-sm">{update.description}</p>
-                    {update.vitals && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded text-sm">
-                        <p className="font-semibold mb-2">Vital Signs:</p>
-                        {update.vitals.temperature && (
-                          <p>• Suhu: {update.vitals.temperature}°C</p>
-                        )}
-                        {update.vitals.weight && <p>• Berat: {update.vitals.weight} kg</p>}
-                        {update.vitals.heart_rate && (
-                          <p>• Detak Jantung: {update.vitals.heart_rate} bpm</p>
-                        )}
-                      </div>
-                    )}
-                  </Card>
-                )
-              })}
+              <div>
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Status</p>
+                <Badge variant={inpatientCase.status === 'discharged' ? 'success' : 'warning'}>
+                  {statusLabel}
+                </Badge>
+              </div>
+              <div>
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Keparahan</p>
+                <Badge variant={inpatientCase.severity === 'critical' ? 'danger' : 'default'}>
+                  {severityLabel}
+                </Badge>
+              </div>
+              <div>
+                <p className="text-xs text-gray-600 uppercase tracking-wide">Tanggal Masuk</p>
+                <p className="font-medium text-sm">{admitDate}</p>
+              </div>
+              {inpatientCase.cage_number && (
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-wide">Kandang</p>
+                  <p className="font-medium text-sm">#{inpatientCase.cage_number}</p>
+                </div>
+              )}
+              {inpatientCase.discharge_date && (
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-wide">Tanggal Pulang</p>
+                  <p className="font-medium text-sm">
+                    {new Date(inpatientCase.discharge_date).toLocaleDateString('id-ID')}
+                  </p>
+                </div>
+              )}
+
+              <hr className="my-4" />
+
+              <div className="bg-blue-50 p-3 rounded">
+                <p className="text-xs text-blue-600 font-semibold">💡 Tip</p>
+                <p className="text-xs text-blue-800 mt-1">
+                  Updates muncul secara real-time saat dokter hewan menambahkan informasi
+                </p>
+              </div>
             </div>
-          )}
+          </Card>
+
+          <Card>
+            <h3 className="font-bold mb-3">📊 Statistik</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-blue-500">{updates.length}</p>
+                <p className="text-xs text-gray-600">Update</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-500">{photos.length}</p>
+                <p className="text-xs text-gray-600">Foto</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="lg:col-span-3 space-y-8">
+          {/* Recovery Timeline */}
+          <div>
+            <h2 className="text-2xl font-bold mb-6">📝 Perkembangan Pemulihan</h2>
+            <RecoveryTimeline updates={updates} loading={loading} />
+          </div>
+
+          {/* Photo Gallery */}
+          <div className="border-t pt-8">
+            <CasePhotoGallery
+              photos={photos}
+              onAddPhoto={handleUploadPhoto}
+              uploading={uploadingPhoto}
+            />
+          </div>
         </div>
       </div>
     </div>
