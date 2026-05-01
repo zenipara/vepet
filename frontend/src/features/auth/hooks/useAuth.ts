@@ -44,7 +44,7 @@ export const useAuth = () => {
           setUser({
             id: session.user.id,
             email: session.user.email!,
-            role: 'customer', // temp
+            role: 'customer',
           })
 
           try {
@@ -52,7 +52,10 @@ export const useAuth = () => {
             setRole(userRole)
             redirectByRole(userRole)
           } catch (error) {
-            console.error('Failed to get user role:', error)
+            console.error('Failed to get user role, redirecting as customer:', error)
+            // Fallback: redirect as customer if role lookup fails
+            setRole('customer')
+            redirectByRole('customer')
           }
         } else if (event === 'SIGNED_OUT') {
           clearAuth()

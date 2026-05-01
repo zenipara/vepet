@@ -52,14 +52,17 @@ export const authService = {
   },
 
   async getUserRole(userId: string): Promise<UserRole> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single()
+    // Get user to access user_metadata.role from JWT token
+    const { data, error } = await supabase.auth.getUser()
+    
+    if (error) {
+      console.error('Failed to get user:', error)
+      throw error
+    }
 
-    if (error) throw error
-    return data.role as UserRole
+    const role = data.user?.user_metadata?.role || 'customer'
+    console.info('getUserRole from metadata:', { userId, role })
+    return role as UserRole
   },
 
   async getSession() {

@@ -8,14 +8,22 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Missing Supabase env vars. Check .env.local');
+if (!supabaseUrl) {
+  console.error('❌ Missing Supabase URL. Set VITE_SUPABASE_URL in your environment.');
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseServiceRoleKey) {
+  console.error('❌ Missing Supabase service role key. Set SUPABASE_SERVICE_ROLE_KEY in your environment to run full seed.');
+  console.error('   You can set it temporarily when running the seed:');
+  console.error('   SUPABASE_SERVICE_ROLE_KEY=<service_role_key> node scripts/seed.js');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 async function seedData() {
   console.log('🌱 Seeding VetCare sample data...\n');
@@ -55,31 +63,34 @@ async function seedData() {
 
     for (const user of testUsers) {
       try {
-        const { data, error } = await supabase.auth.signUpWithPassword({
+        // Use admin createUser when running with service role key
+        const { data, error } = await supabase.auth.admin.createUser({
           email: user.email,
           password: user.password,
-          options: {
-            data: {
-              full_name: user.name,
-              role: user.role,
-            },
+          user_metadata: {
+            full_name: user.name,
+            role: user.role,
           },
+          email_confirm: true,
         });
 
-        if (error && error.message.includes('already exists')) {
-          console.log(`  ⏭️  ${user.email} already exists`);
-        } else if (error) {
-          console.error(`  ❌ Error creating ${user.email}:`, error.message);
+        if (error) {
+          // Some projects may already have the user created; listUsers will catch that later
+          if (String(error.message).toLowerCase().includes('already exists')) {
+            console.log(`  ⏭️  ${user.email} already exists`);
+          } else {
+            console.error(`  ❌ Error creating ${user.email}:`, error.message || error);
+          }
         } else {
           console.log(`  ✅ Created ${user.email} (${user.role})`);
         }
       } catch (err) {
-        console.error(`  ❌ Error: ${err.message}`);
+        console.error(`  ❌ Error: ${err?.message || err}`);
       }
     }
 
     // ==========================================
-    // 2. Get created user IDs
+    // 2. Get created user IDs & create profiles
     // ==========================================
     console.log('\n📋 Fetching user IDs...');
 
@@ -92,6 +103,34 @@ async function seedData() {
     }
 
     console.log(`  ✅ Found ${Object.keys(userMap).length} users`);
+
+    // ==========================================
+    // 2a. Create/Update profiles with correct roles
+    // ==========================================
+    console.log('\n👤 Creating/updating user profiles with roles...');
+
+    if (usersData?.users) {
+      for (const authUser of usersData.users) {
+        const testUser = testUsers.find(tu => tu.email === authUser.email);
+        if (testUser) {
+          // Upsert profile - insert or update if exists
+          const { error } = await supabase
+            .from('profiles')
+            .upsert({
+              id: authUser.id,
+              full_name: testUser.name,
+              role: testUser.role,
+              is_active: true,
+            }, { onConflict: 'id' });
+
+          if (error) {
+            console.error(`  ❌ Error setting profile for ${authUser.email}:`, error.message);
+          } else {
+            console.log(`  ✅ Profile ${authUser.email} set as '${testUser.role}'`);
+          }
+        }
+      }
+    }
 
     // ==========================================
     // 3. Create Sample Doctors
