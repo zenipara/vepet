@@ -3,7 +3,7 @@
 **VetCare** is a production-ready veterinary clinic management platform with a custom-built backend (Node.js + Go + PostgreSQL).
 
 > **🚀 Getting Started?** Start with [START_HERE.md](START_HERE.md)  
-> **📚 Need Docs?** All guides at [DOCS.md](DOCS.md)
+> **📚 Need Docs?** Main guides: [SETUP_GUIDE.md](SETUP_GUIDE.md) · [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
 
 ## Overview
 

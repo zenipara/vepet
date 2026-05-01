@@ -127,4 +127,31 @@ go run ./cmd/realtime
 
 - This repository previously referenced a BaaS. The new architecture uses a custom API + Postgres (Render or local) and Cloudflare R2 for storage. Replace any client-side BaaS usage with calls to the Node.js API gateway.
 
-If you want, I can now update other documentation files (deployment guides, phase docs) to remove remaining references to the previous BaaS and reflect the new architecture.
+## Development — Quick Start (consolidated)
+
+The full developer reference is consolidated into this guide. Quick steps to get developing:
+
+1. Clone the repo and install dependencies for each service (frontend, backend, realtime).
+
+```bash
+git clone https://github.com/zenipara/VetCare.git
+cd VetCare
+
+# Frontend
+cd frontend
+pnpm install
+
+# Backend
+cd ../backend
+pnpm install
+
+# Realtime (Go)
+cd ../services/realtime
+go mod download
+```
+
+2. Set environment variables from examples (`.env.example` or `.env.local`) for each service.
+3. Apply database migrations (see `supabase/migrations/`).
+4. Start services in separate terminals: frontend (`pnpm run dev`), backend (`pnpm run dev`), realtime (`go run main.go`).
+
+This file now contains the canonical local setup and development quick start. If you want, I can now update other documentation files (deployment guides, phase docs) to remove remaining references to the previous BaaS and reflect the new architecture.
