@@ -60,4 +60,82 @@ export const cmsService = {
 
     if (error) throw error
   },
+
+  // Blog posts
+  async getBlogPosts() {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('published_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  },
+
+  async createBlogPost(payload: { title: string; content: string; category?: string; status?: string; author_id?: string }) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .insert({ ...payload, published_at: payload.status === 'published' ? new Date().toISOString() : null })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  async updateBlogPost(id: string, payload: Record<string, any>) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { error } = await supabase
+      .from('blog_posts')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) throw error
+  },
+
+  async deleteBlogPost(id: string) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+  },
+
+  // Testimonials
+  async getTestimonials() {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('testimonials')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  },
+
+  async createTestimonial(payload: { person_name: string; pet_name: string; content: string; rating: number; status?: string }) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { data, error } = await supabase
+      .from('testimonials')
+      .insert({ ...payload })
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  async updateTestimonial(id: string, payload: Record<string, any>) {
+    const { supabase } = await import('@/lib/supabaseClient')
+    const { error } = await supabase
+      .from('testimonials')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) throw error
+  },
 }

@@ -105,12 +105,18 @@ const statusColors = {
 }
 
 export const CMSPage = () => {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts)
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [clinicInfo, setClinicInfo] = useState<ClinicInfo | null>(null)
   const [editingClinic, setEditingClinic] = useState(false)
   const [savingClinic, setSavingClinic] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [loadingPosts, setLoadingPosts] = useState(true)
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true)
+  const [showCreatePost, setShowCreatePost] = useState(false)
+  const [newPost, setNewPost] = useState({ title: '', content: '', category: '', status: 'draft' })
+  const [showCreateTestimonial, setShowCreateTestimonial] = useState(false)
+  const [newTestimonial, setNewTestimonial] = useState({ person_name: '', pet_name: '', content: '', rating: 5 })
 
   const filteredPosts = blogPosts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -132,6 +138,39 @@ export const CMSPage = () => {
       }
     }
     loadProfile()
+
+    const loadContent = async () => {
+      setLoadingPosts(true)
+      setLoadingTestimonials(true)
+      try {
+        const [posts, tests] = await Promise.all([cmsService.getBlogPosts(), cmsService.getTestimonials()])
+        setBlogPosts((posts || []).map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          author: p.author_id || 'Admin',
+          date: p.published_at ? new Date(p.published_at).toLocaleDateString('id-ID') : (p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : ''),
+          status: p.status || 'draft',
+          views: p.views || 0,
+          category: p.category || '',
+        })))
+
+        setTestimonials((tests || []).map((t: any) => ({
+          id: t.id,
+          personName: t.person_name,
+          petName: t.pet_name,
+          content: t.content,
+          rating: t.rating || 5,
+          status: t.status || 'pending',
+          date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+        })))
+      } catch (err) {
+        console.error('Gagal memuat konten CMS:', err)
+      } finally {
+        setLoadingPosts(false)
+        setLoadingTestimonials(false)
+      }
+    }
+    loadContent()
   }, [])
 
   return (
@@ -164,14 +203,51 @@ export const CMSPage = () => {
                   />
                 </div>
               </div>
-              <Button className="flex items-center gap-2">
+              <Button className="flex items-center gap-2" onClick={() => setShowCreatePost(true)}>
                 <Plus className="w-4 h-4" />
                 Buat Blog Post
               </Button>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              {filteredPosts.map(post => (
+              {showCreatePost && (
+                <Card className="p-4">
+                  <h3 className="font-semibold mb-3">Buat Post Baru</h3>
+                  <div className="grid gap-2">
+                    <Input placeholder="Judul" value={newPost.title} onChange={e => setNewPost({ ...newPost, title: e.target.value })} />
+                    <Input placeholder="Kategori" value={newPost.category} onChange={e => setNewPost({ ...newPost, category: e.target.value })} />
+                    <textarea placeholder="Konten" className="p-2 border rounded" value={newPost.content} onChange={e => setNewPost({ ...newPost, content: e.target.value })} rows={6} />
+                    <div className="flex gap-2">
+                      <Button onClick={async () => {
+                        try {
+                          const created = await cmsService.createBlogPost({ title: newPost.title, content: newPost.content, category: newPost.category, status: newPost.status })
+                          setShowCreatePost(false)
+                          setNewPost({ title: '', content: '', category: '', status: 'draft' })
+                          // reload posts
+                          const posts = await cmsService.getBlogPosts()
+                          setBlogPosts((posts || []).map((p: any) => ({
+                            id: p.id,
+                            title: p.title,
+                            author: p.author_id || 'Admin',
+                            date: p.published_at ? new Date(p.published_at).toLocaleDateString('id-ID') : (p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : ''),
+                            status: p.status || 'draft',
+                            views: p.views || 0,
+                            category: p.category || '',
+                          })))
+                        } catch (err) {
+                          console.error('Gagal membuat post:', err)
+                        }
+                      }}>Simpan</Button>
+                      <Button variant="secondary" onClick={() => setShowCreatePost(false)}>Batal</Button>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {loadingPosts ? (
+                <div className="py-8 text-center">Memuat...</div>
+              ) : (
+                filteredPosts.map(post => (
                 <Card key={post.id} className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -193,78 +269,205 @@ export const CMSPage = () => {
                   <div className="flex items-center gap-3">
                     <Badge variant="secondary">{post.category}</Badge>
                     <div className="flex-1" />
-                    <Button size="sm" variant="secondary">
-                      <Edit2 className="w-4 h-4" />
+                    <Button size="sm" variant="secondary" onClick={async () => {
+                      try {
+                        await cmsService.updateBlogPost(post.id, { status: post.status === 'published' ? 'draft' : 'published' })
+                        const posts = await cmsService.getBlogPosts()
+                        setBlogPosts((posts || []).map((p: any) => ({
+                          id: p.id,
+                          title: p.title,
+                          author: p.author_id || 'Admin',
+                          date: p.published_at ? new Date(p.published_at).toLocaleDateString('id-ID') : (p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : ''),
+                          status: p.status || 'draft',
+                          views: p.views || 0,
+                          category: p.category || '',
+                        })))
+                      } catch (err) {
+                        console.error('Gagal toggle publish:', err)
+                      }
+                    }}>
+                      {post.status === 'published' ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </Button>
-                    <Button size="sm" variant="secondary">
-                      {post.status === 'published' ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                    </Button>
-                    <Button size="sm" variant="danger">
+                    <Button size="sm" variant="danger" onClick={async () => {
+                      try {
+                        await cmsService.deleteBlogPost(post.id)
+                        const posts = await cmsService.getBlogPosts()
+                        setBlogPosts((posts || []).map((p: any) => ({
+                          id: p.id,
+                          title: p.title,
+                          author: p.author_id || 'Admin',
+                          date: p.published_at ? new Date(p.published_at).toLocaleDateString('id-ID') : (p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : ''),
+                          status: p.status || 'draft',
+                          views: p.views || 0,
+                          category: p.category || '',
+                        })))
+                      } catch (err) {
+                        console.error('Gagal hapus post:', err)
+                      }
+                    }}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </Card>
-              ))}
+              ))
+              )}
             </div>
           </TabsContent>
 
           {/* Testimonials Tab */}
           <TabsContent value="testimonials" className="space-y-6">
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2" onClick={() => setShowCreateTestimonial(true)}>
               <Plus className="w-4 h-4" />
               Tambah Testimoni
             </Button>
 
+            {showCreateTestimonial && (
+              <Card className="p-4">
+                <h3 className="font-semibold mb-3">Tambah Testimoni</h3>
+                <div className="grid gap-2">
+                  <Input placeholder="Nama" value={newTestimonial.person_name} onChange={e => setNewTestimonial({ ...newTestimonial, person_name: e.target.value })} />
+                  <Input placeholder="Nama Hewan" value={newTestimonial.pet_name} onChange={e => setNewTestimonial({ ...newTestimonial, pet_name: e.target.value })} />
+                  <textarea placeholder="Isi testimoni" className="p-2 border rounded" value={newTestimonial.content} onChange={e => setNewTestimonial({ ...newTestimonial, content: e.target.value })} rows={4} />
+                  <div className="flex gap-2">
+                    <Button onClick={async () => {
+                      try {
+                        await cmsService.createTestimonial({ ...newTestimonial, status: 'pending' })
+                        const tests = await cmsService.getTestimonials()
+                        setTestimonials((tests || []).map((t: any) => ({
+                          id: t.id,
+                          personName: t.person_name,
+                          petName: t.pet_name,
+                          content: t.content,
+                          rating: t.rating || 5,
+                          status: t.status || 'pending',
+                          date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+                        })))
+                        setShowCreateTestimonial(false)
+                        setNewTestimonial({ person_name: '', pet_name: '', content: '', rating: 5 })
+                      } catch (err) {
+                        console.error('Gagal menambah testimoni:', err)
+                      }
+                    }}>Simpan</Button>
+                    <Button variant="secondary" onClick={() => setShowCreateTestimonial(false)}>Batal</Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             <div className="grid grid-cols-1 gap-4">
-              {testimonials.map(testimonial => (
-                <Card key={testimonial.id} className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{testimonial.personName}</h3>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Hewan Peliharaan: <span className="font-medium">{testimonial.petName}</span>
-                      </p>
+              {loadingTestimonials ? (
+                <div className="py-8 text-center">Memuat...</div>
+              ) : (
+                testimonials.map(testimonial => (
+                  <Card key={testimonial.id} className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{testimonial.personName}</h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Hewan Peliharaan: <span className="font-medium">{testimonial.petName}</span>
+                        </p>
+                      </div>
+                      <Badge variant={statusColors[testimonial.status] as any}>
+                        {testimonial.status === 'published'
+                          ? 'Dipublikasikan'
+                          : testimonial.status === 'pending'
+                            ? 'Pending'
+                            : 'Ditolak'}
+                      </Badge>
                     </div>
-                    <Badge variant={statusColors[testimonial.status] as any}>
-                      {testimonial.status === 'published'
-                        ? 'Dipublikasikan'
-                        : testimonial.status === 'pending'
-                          ? 'Pending'
-                          : 'Ditolak'}
-                    </Badge>
-                  </div>
 
-                  <p className="text-gray-700 mb-3 italic">"{testimonial.content}"</p>
+                    <p className="text-gray-700 mb-3 italic">"{testimonial.content}"</p>
 
-                  <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>
-                      {'⭐'.repeat(testimonial.rating)} ({testimonial.rating}/5)
-                    </span>
-                    {testimonial.status === 'pending' && (
-                      <div className="flex gap-2">
-                        <Button size="sm">Setujui</Button>
-                        <Button size="sm" variant="danger">
-                          Tolak
-                        </Button>
-                      </div>
-                    )}
-                    {testimonial.status === 'published' && (
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="secondary">
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="danger">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              ))}
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>
+                        {'⭐'.repeat(testimonial.rating)} ({testimonial.rating}/5)
+                      </span>
+                      {testimonial.status === 'pending' && (
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={async () => {
+                            try {
+                              await cmsService.updateTestimonial(testimonial.id, { status: 'published' })
+                              const tests = await cmsService.getTestimonials()
+                              setTestimonials((tests || []).map((t: any) => ({
+                                id: t.id,
+                                personName: t.person_name,
+                                petName: t.pet_name,
+                                content: t.content,
+                                rating: t.rating || 5,
+                                status: t.status || 'pending',
+                                date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+                              })))
+                            } catch (err) {
+                              console.error('Gagal setujui testimoni:', err)
+                            }
+                          }}>Setujui</Button>
+                          <Button size="sm" variant="danger" onClick={async () => {
+                            try {
+                              await cmsService.updateTestimonial(testimonial.id, { status: 'rejected' })
+                              const tests = await cmsService.getTestimonials()
+                              setTestimonials((tests || []).map((t: any) => ({
+                                id: t.id,
+                                personName: t.person_name,
+                                petName: t.pet_name,
+                                content: t.content,
+                                rating: t.rating || 5,
+                                status: t.status || 'pending',
+                                date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+                              })))
+                            } catch (err) {
+                              console.error('Gagal tolak testimoni:', err)
+                            }
+                          }}>
+                            Tolak
+                          </Button>
+                        </div>
+                      )}
+                      {testimonial.status === 'published' && (
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="secondary" onClick={async () => {
+                            try {
+                              await cmsService.updateTestimonial(testimonial.id, { status: 'archived' })
+                              const tests = await cmsService.getTestimonials()
+                              setTestimonials((tests || []).map((t: any) => ({
+                                id: t.id,
+                                personName: t.person_name,
+                                petName: t.pet_name,
+                                content: t.content,
+                                rating: t.rating || 5,
+                                status: t.status || 'pending',
+                                date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+                              })))
+                            } catch (err) {
+                              console.error('Gagal arsipkan testimoni:', err)
+                            }
+                          }}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="danger" onClick={async () => {
+                            try {
+                              await cmsService.updateTestimonial(testimonial.id, { status: 'deleted' })
+                              const tests = await cmsService.getTestimonials()
+                              setTestimonials((tests || []).map((t: any) => ({
+                                id: t.id,
+                                personName: t.person_name,
+                                petName: t.pet_name,
+                                content: t.content,
+                                rating: t.rating || 5,
+                                status: t.status || 'pending',
+                                date: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '',
+                              })))
+                            } catch (err) {
+                              console.error('Gagal hapus testimoni:', err)
+                            }
+                          }}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))
+              )}
             </div>
           </TabsContent>
 

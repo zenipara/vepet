@@ -1,4 +1,4 @@
-import type { Medical Record, Treatment, Prescription } from '@/types/global'
+import type { Treatment, Prescription } from '@/types/medical'
 
 export interface MedicalRecordWithDetails {
   id: string
