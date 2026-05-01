@@ -26,6 +26,7 @@ export const SupportPage = () => {
         <Badge variant="secondary">Bantuan & Dukungan</Badge>
 
         <div className="public-reveal mt-6 space-y-6">
+          <p className="public-eyebrow">Help Center</p>
           <h1 className="public-page-headline">Pusat bantuan</h1>
           <p className="public-page-subtitle">Temukan jawaban cepat untuk pertanyaan umum tentang penggunaan VetCare.</p>
 

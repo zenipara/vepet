@@ -34,6 +34,7 @@ export const ContactPage = () => {
         <Badge variant="success">Kontak</Badge>
 
         <div className="public-reveal mt-6 space-y-6">
+          <p className="public-eyebrow">Hubungi Tim</p>
           <h1 className="public-page-headline">Hubungi kami</h1>
           <p className="public-page-subtitle">Isi form berikut dan tim kami akan menghubungi Anda dalam 1-2 hari kerja.</p>
 
