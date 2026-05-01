@@ -68,10 +68,15 @@ export const Footer = () => {
                 Coba Sekarang
               </Button>
             </Link>
-            <a href="#" className="inline-flex items-center gap-2 text-slate-400 transition-colors hover:text-white">
-              Baca kebijakan
-              <ArrowRight className="h-4 w-4" />
-            </a>
+            <Link to="/about" className="inline-flex items-center gap-2 text-slate-400 transition-colors hover:text-white">
+              Tentang
+            </Link>
+            <Link to="/support" className="inline-flex items-center gap-2 text-slate-400 transition-colors hover:text-white">
+              Bantuan
+            </Link>
+            <Link to="/contact" className="inline-flex items-center gap-2 text-slate-400 transition-colors hover:text-white">
+              Kontak
+            </Link>
           </div>
         </div>
       </div>

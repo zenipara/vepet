@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/authStore'
 import { authService } from '@/features/auth/services/authService'
-import { LogOut, PawPrint, ShieldCheck } from 'lucide-react'
+import { LogOut, PawPrint, ShieldCheck, Menu, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const Navbar = () => {
   const { user } = useAuthStore()
+
+  const [open, setOpen] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -52,19 +55,46 @@ export const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm" className="border border-white/10 text-slate-200 hover:bg-white/10 hover:text-white">
-                  Masuk
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm" className="shadow-lg shadow-emerald-950/20">
-                  Daftar
-                </Button>
-              </Link>
+              <div className="hidden md:flex items-center gap-3">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="border border-white/10 text-slate-200 hover:bg-white/10 hover:text-white">
+                    Masuk
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="shadow-lg shadow-emerald-950/20">
+                    Daftar
+                  </Button>
+                </Link>
+              </div>
+
+              <button
+                aria-label={open ? 'Tutup menu' : 'Buka menu'}
+                onClick={() => setOpen((s) => !s)}
+                className="inline-flex items-center justify-center rounded-md bg-white/5 p-2 text-slate-200 hover:bg-white/10 md:hidden"
+              >
+                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
             </>
           )}
         </div>
+
+        {open && (
+          <div className="absolute left-0 right-0 top-full z-40 bg-slate-950/95 border-t border-white/5 md:hidden">
+            <div className="mx-auto max-w-7xl px-4 py-4">
+              <div className="flex flex-col gap-3">
+                <Link to="/about" onClick={() => setOpen(false)} className="text-slate-200">Tentang</Link>
+                <Link to="/support" onClick={() => setOpen(false)} className="text-slate-200">Bantuan</Link>
+                <Link to="/contact" onClick={() => setOpen(false)} className="text-slate-200">Kontak</Link>
+                <div className="pt-2">
+                  <Link to="/register" onClick={() => setOpen(false)}>
+                    <Button className="w-full">Daftar</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

@@ -4,6 +4,13 @@
 
 :root {
   @apply bg-white text-gray-900;
+
+  /* design tokens for CSS utilities */
+  --vc-bg: #ffffff;
+  --vc-text: #0f172a; /* slate-900 */
+  --vc-muted: #64748b; /* slate-500 */
+  --vc-brand: #10b981; /* primary */
+  --vc-brand-600: #059669;
 }
 
 html {
@@ -12,6 +19,37 @@ html {
 
 body {
   @apply antialiased;
+}
+
+/* focus ring utility for non-tailwind elements */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  box-shadow: 0 0 0 4px rgba(16,185,129,0.12);
+  border-radius: 0.5rem;
+}
+
+/* helper classes */
+.vc-btn-ghost-outline {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: var(--vc-text);
+}
+
+.vc-card-muted {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(15,23,42,0.06);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom scrollbar */
