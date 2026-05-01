@@ -5,8 +5,8 @@ Panduan ini menjelaskan langkah-langkah untuk setup GitHub Pages deployment otom
 ## ❌ Penyebab Deployment Gagal (Common Issues)
 
 1. **Secrets tidak dikonfigurasi** - Workflow memerlukan env vars untuk build Vite
-2. **GitHub Pages branch tidak ter-setup** - Repository perlu mengaktifkan GitHub Pages
-3. **Permissions tidak tepat** - Workflow memerlukan `contents: write` dan `pages: write`
+2. **GitHub Pages tidak aktif** - Repository perlu mengaktifkan GitHub Pages
+3. **Permissions tidak tepat** - Workflow memerlukan `pages: write` dan `id-token: write`
 4. **Base path salah** - GitHub Pages project repo butuh base path `/VetCare/`
 
 ## ✅ Setup Checklist
@@ -34,11 +34,9 @@ Di GitHub repo settings:
 
 **Settings → Pages → Build and deployment**
 
-- Source: `Deploy from a branch`
-- Branch: `gh-pages` / root
-- Folder: `/` (root)
+- Source: `GitHub Actions`
 
-Atau jika branch belum ada, workflow akan membuatnya otomatis saat first deploy.
+GitHub akan menampilkan URL Pages setelah job deploy sukses.
 
 ### 3. Verify Workflow Configuration
 File `.github/workflows/deploy.yml` sudah punya:
@@ -46,7 +44,6 @@ File `.github/workflows/deploy.yml` sudah punya:
 ✅ **Permissions block** (diperlukan untuk deploy ke gh-pages):
 ```yaml
 permissions:
-  contents: write
   pages: write
   id-token: write
 ```
@@ -81,7 +78,9 @@ Build with Vite (menggunakan base=/VetCare/)
     ↓
 Verify dist folder berisi files
     ↓
-Deploy ke gh-pages branch
+Upload Pages artifact
+    ↓
+Deploy via GitHub Actions Pages
     ↓
 GitHub Pages publish (≈ 1-2 menit)
     ↓
@@ -126,13 +125,13 @@ Aplikasi akan ter-deploy ke:
 | Lint | ESLint check | ⚠️ Non-blocking (tidak stop deploy) |
 | **Build production** | `npm run build` → creates `dist/` | ❌ **CRITICAL** - Deploy tidak bisa lanjut |
 | Verify dist folder | Check dist exists + debug env vars | ⚠️ Informasional (tidak block deploy) |
-| **Deploy to GitHub Pages** | Push dist/ ke gh-pages branch | ❌ **CRITICAL** - Aplikasi tidak ter-publish |
+| **Deploy to GitHub Pages** | Publish Pages artifact via GitHub Actions | ❌ **CRITICAL** - Aplikasi tidak ter-publish |
 
 ## 🎯 Apa yang Terjadi Setelah Deploy Sukses
 
-1. **dist/ folder di-publish ke gh-pages branch**
-   - `gh-pages` branch dibuat otomatis jika belum ada
-   - Hanya file build yang ter-push (bukan source code)
+1. **dist/ folder di-publish sebagai Pages artifact**
+    - Build output di-upload sebagai GitHub Pages artifact
+    - Tidak ada push manual ke branch `gh-pages`
 
 2. **GitHub Pages serve aplikasi**
    - Build artifacts ter-serve dari `https://zenipara.github.io/VetCare/`  
@@ -146,7 +145,7 @@ Aplikasi akan ter-deploy ke:
 
 - [GitHub Pages Docs](https://docs.github.com/en/pages)
 - [Vite Base Path Config](https://vitejs.dev/config/shared-options.html#base)
-- [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages)
+- [GitHub Actions Pages deployment](https://docs.github.com/en/pages/getting-started-with-github-pages/using-github-actions-to-publish-your-site)
 - [React Router Deployment Guide](https://reactrouter.com/start/framework/deployment)
 
 ---

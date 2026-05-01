@@ -23,11 +23,9 @@ VITE_SUPABASE_ANON_KEY = eyJ.... (paste anon key dari Supabase)
 #### 2. ✅ Enable GitHub Pages (Jika belum)
 **Path**: Repository Settings → Pages
 
-- Set **Source** ke: "Deploy from a branch"
-- Set **Branch** ke: `gh-pages`
-- Folder: `/` (root)
+- Set **Source** ke: "GitHub Actions"
 
-Workflow akan auto-create `gh-pages` branch pada first successful deploy.
+GitHub akan menampilkan URL Pages setelah job deploy sukses.
 
 #### 3. 🔍 Check Workflow Run Logs
 **Path**: Repository → Actions → Latest "Build & Deploy VetCare System"
@@ -44,7 +42,6 @@ Cari error di steps berikut (dalam order):
 1. **Added Permissions Block** ke workflow
    ```yaml
    permissions:
-     contents: write      # Perlu untuk commit ke gh-pages
      pages: write         # Perlu untuk GitHub Pages
      id-token: write      # Perlu untuk OIDC trust
    ```
@@ -63,6 +60,10 @@ Cari error di steps berikut (dalam order):
 
 4. **Added GITHUB_PAGES env var** di build step
    - Memicu conditional base path di Vite
+
+5. **Migrated deploy ke GitHub Actions resmi**
+   - Build job meng-upload Pages artifact
+   - Deploy job memakai `actions/deploy-pages`
 
 ## 🚀 Next Steps
 
@@ -97,8 +98,9 @@ Local (MacOS/Windows)
 CI/CD (GitHub Actions)
     └─ npm run build (with GITHUB_PAGES=true)
          └─ Creates /frontend/dist/ with base=/VetCare/
-         └─ Push to gh-pages branch
-              └─ GitHub Pages serves from https://zenipara.github.io/VetCare/
+       └─ Upload Pages artifact
+          └─ GitHub Actions deploy-pages publishes site
+             └─ GitHub Pages serves from https://zenipara.github.io/VetCare/
                    ├─ index.html (served at /VetCare/)
                    ├─ assets/... (served at /VetCare/assets/)
                    └─ React Router handles routes from /VetCare/ base
@@ -119,7 +121,7 @@ Jika masih gagal setelah setup:
 1. **Buka Actions log** dan screenshot error message
 2. **Check build output** di "Build production" step - ada TypeScript error?
 3. **Check dist folder** di "Verify dist folder" step - files ada?
-4. **Check deploy step** - ada error dari peaceiris/actions-gh-pages?
+4. **Check deploy step** - ada error dari actions/deploy-pages?
 
 ---
 
