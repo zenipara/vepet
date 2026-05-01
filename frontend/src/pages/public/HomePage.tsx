@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import SEO from '@/components/seo/SEO'
+import { analyticsService } from '@/features/analytics/services/analyticsService'
 import { useEffect, useState } from 'react'
 import {
   ArrowRight,
@@ -203,13 +204,21 @@ export const HomePage = () => {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link to="/register" aria-label="Daftar akun VetCare">
+              <Link
+                to="/register"
+                aria-label="Daftar akun VetCare"
+                onClick={() => analyticsService.trackCTAClick('Hero CTA', 'Register')}
+              >
                 <Button size="lg" className="group w-full sm:w-auto focus-visible:ring-4 focus-visible:ring-emerald-300">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/emergency" aria-label="Buka halaman darurat VetCare">
+              <Link
+                to="/emergency"
+                aria-label="Buka halaman darurat VetCare"
+                onClick={() => analyticsService.trackCTAClick('Hero CTA', 'Emergency')}
+              >
                 <Button size="lg" variant="ghost" className="w-full border border-white/20 text-white hover:bg-white/10 sm:w-auto focus-visible:ring-4 focus-visible:ring-white/20">
                   Bantuan Darurat
                 </Button>
@@ -411,12 +420,18 @@ export const HomePage = () => {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-            <Link to="/register">
+            <Link
+              to="/register"
+              onClick={() => analyticsService.trackCTAClick('Finale CTA', 'Register')}
+            >
               <Button size="lg" variant="ghost" className="w-full bg-white text-emerald-700 hover:bg-emerald-50 sm:w-auto">
                 Daftar Gratis
               </Button>
             </Link>
-            <Link to="/login">
+            <Link
+              to="/login"
+              onClick={() => analyticsService.trackCTAClick('Finale CTA', 'Login')}
+            >
               <Button size="lg" variant="ghost" className="w-full border border-white/20 text-white hover:bg-white/10 sm:w-auto">
                 Masuk ke Akun
               </Button>
@@ -431,10 +446,18 @@ export const HomePage = () => {
         }`}
       >
         <div className="mx-auto flex max-w-7xl gap-3">
-          <Link to="/register" className="w-full">
+          <Link
+            to="/register"
+            className="w-full"
+            onClick={() => analyticsService.trackCTAClick('Sticky CTA', 'Register')}
+          >
             <Button className="w-full">Daftar Gratis</Button>
           </Link>
-          <Link to="/login" className="w-full">
+          <Link
+            to="/login"
+            className="w-full"
+            onClick={() => analyticsService.trackCTAClick('Sticky CTA', 'Login')}
+          >
             <Button variant="ghost" className="w-full border border-slate-200 text-slate-700 hover:bg-slate-100">
               Masuk
             </Button>

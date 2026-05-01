@@ -18,6 +18,7 @@
   --vc-brand: #0ea5a4;
   --vc-brand-600: #0f766e;
   --vc-cyan: #0891b2;
+  transition: --vc-brand 600ms ease, --vc-brand-600 600ms ease, --vc-cyan 600ms ease;
 }
 
 html {

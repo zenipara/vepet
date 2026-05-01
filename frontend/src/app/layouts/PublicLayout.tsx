@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { analyticsService } from '@/features/analytics/services/analyticsService'
 
 import React, { useEffect, useState } from 'react'
 
@@ -20,6 +21,7 @@ export const PublicLayout: React.FC = () => {
     const nextTheme: PublicTheme = theme === 'vivid' ? 'soft' : 'vivid'
     setTheme(nextTheme)
     localStorage.setItem('vetcare-public-theme', nextTheme)
+    analyticsService.trackThemeToggle(nextTheme)
   }
 
   return (

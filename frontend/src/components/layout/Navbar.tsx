@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/authStore'
 import { authService } from '@/features/auth/services/authService'
-import { LogOut, PawPrint, ShieldCheck, Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import { LogOut, PawPrint, ShieldCheck, Menu, X, Sun, Moon } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 type NavbarProps = {
   theme?: 'soft' | 'vivid'
@@ -14,6 +14,19 @@ export const Navbar = ({ theme = 'vivid', onToggleTheme }: NavbarProps) => {
   const { user } = useAuthStore()
 
   const [open, setOpen] = useState(false)
+  const [isTogglingTheme, setIsTogglingTheme] = useState(false)
+
+  useEffect(() => {
+    if (isTogglingTheme) {
+      const timer = setTimeout(() => setIsTogglingTheme(false), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isTogglingTheme])
+
+  const handleThemeToggle = () => {
+    setIsTogglingTheme(true)
+    onToggleTheme?.()
+  }
 
   const handleLogout = async () => {
     try {
@@ -45,10 +58,17 @@ export const Navbar = ({ theme = 'vivid', onToggleTheme }: NavbarProps) => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={onToggleTheme}
-            className="hidden rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 md:inline-flex"
+            onClick={handleThemeToggle}
+            aria-label={`Ganti tema ke ${theme === 'vivid' ? 'soft' : 'vivid'}`}
+            className={`hidden rounded-full border border-white/15 bg-white/5 p-2 text-slate-200 transition-all duration-500 hover:bg-white/10 hover:border-white/25 md:inline-flex ${
+              isTogglingTheme ? 'scale-110 rotate-12' : 'scale-100 rotate-0'
+            }`}
           >
-            Tema: {theme === 'vivid' ? 'Vivid' : 'Soft'}
+            {theme === 'vivid' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </button>
 
           {user ? (
@@ -98,12 +118,17 @@ export const Navbar = ({ theme = 'vivid', onToggleTheme }: NavbarProps) => {
               <div className="flex flex-col gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    onToggleTheme?.()
-                  }}
-                  className="w-fit rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200"
+                  onClick={handleThemeToggle}
+                  aria-label={`Ganti tema ke ${theme === 'vivid' ? 'soft' : 'vivid'}`}
+                  className={`w-fit rounded-full border border-white/15 bg-white/5 p-2 text-slate-200 transition-all duration-500 hover:bg-white/10 hover:border-white/25 ${
+                    isTogglingTheme ? 'scale-110 rotate-12' : 'scale-100 rotate-0'
+                  }`}
                 >
-                  Tema: {theme === 'vivid' ? 'Vivid' : 'Soft'}
+                  {theme === 'vivid' ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
                 </button>
                 <Link to="/about" onClick={() => setOpen(false)} className="text-slate-200">Tentang</Link>
                 <Link to="/support" onClick={() => setOpen(false)} className="text-slate-200">Bantuan</Link>

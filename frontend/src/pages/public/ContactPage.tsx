@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { Input, Textarea } from '@/components/ui/Input'
 import { useState } from 'react'
 import SEO from '@/components/seo/SEO'
+import { analyticsService } from '@/features/analytics/services/analyticsService'
 
 export const ContactPage = () => {
   const [name, setName] = useState('')
@@ -22,6 +23,7 @@ export const ContactPage = () => {
       setName('')
       setEmail('')
       setMessage('')
+      analyticsService.trackFormSubmit('Contact Form')
     } catch (err) {
       setStatus('error')
     }
