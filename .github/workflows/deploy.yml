@@ -27,11 +27,15 @@ jobs:
           cache-dependency-path: frontend/package.json
 
       - name: Install PostgreSQL client
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SUPABASE_DB_URL != ''
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
+      - name: Warn when SUPABASE_DB_URL is missing
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SUPABASE_DB_URL == ''
+        run: echo "⚠️ SUPABASE_DB_URL is not set. Skipping database migrations for this deploy."
+
       - name: Deploy database migrations to Supabase
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SUPABASE_DB_URL != ''
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: bash scripts/deploy-supabase-db.sh
