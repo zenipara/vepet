@@ -1,52 +1,38 @@
 # VetCare System
 
-VetCare is a production-ready SaaS platform for veterinary clinics and petshops. The project now uses a custom backend architecture (no Backend-as-a-Service). This README documents the new system architecture, responsibilities, deployment and development workflows for engineers.
+**VetCare** is a production-ready veterinary clinic management platform with a custom-built backend (Node.js + Go + PostgreSQL).
 
-## 1. Project Overview
+> **🚀 Getting Started?** Start with [START_HERE.md](START_HERE.md)  
+> **📚 Need Docs?** All guides at [DOCS.md](DOCS.md)
 
-This repository contains a React single-page application (frontend) and a set of backend services that together build VetCare — a scalable clinic management platform. The backend is custom-built (Node.js + Go) and the system relies on PostgreSQL and Cloudflare R2 for persistence and storage.
+## Overview
 
-Key goals:
-- Maintain a clear separation between API gateway (Node.js) and specialized services (Go)
-- Keep PostgreSQL as the single source of truth
-- Support realtime features through a dedicated Go WebSocket service
-- Optimize file uploads with signed URLs to Cloudflare R2
+- **Frontend**: React SPA (GitHub Pages)
+- **API**: Node.js + Express (Render)
+- **Realtime**: Go + WebSocket (Render)
+- **Database**: PostgreSQL (Render)
+- **Storage**: Cloudflare R2
 
-## 2. New Architecture
+Key design principles:
+- Clear separation between API Gateway and specialized services
+- PostgreSQL as single source of truth
+- Realtime via dedicated WebSocket service
+- Secure file uploads with signed URLs
 
-Frontend (GitHub Pages - static React SPA)
-		↓
-Node.js API Gateway (Render) — authentication, API routing, signed URL generation
-		↓
-Go Services (Render) — realtime, background workers, heavy processing
-		↓
-PostgreSQL (Render Managed) — relational data store
-		↓
-Cloudflare R2 — object storage for files and media
-
-ASCII Diagram
+## Architecture
 
 ```
-[Browser] -> [GitHub Pages: React SPA]
-								|
-								v
-				 [Node.js API Gateway - Render]
-								|
-				-----------------------------
-				|                           |
-				v                           v
- [Go Services - Render]        [Render PostgreSQL]
-				|                           |
-				v                           v
-	WebSockets / Workers         Cloudflare R2 (via signed URLs)
+[Browser/React] → [GitHub Pages]
+     ↓ REST API
+[Node.js API Gateway] → [PostgreSQL] + [Cloudflare R2]
+     ↓ WebSocket
+[Go Realtime Service] ↔ [PostgreSQL]
 ```
 
-Responsibilities
-- Frontend: UI, form validation, local state, calling the API.
-- Node.js API Gateway: authentication (JWT), request validation, API surface, generating signed upload URLs, proxying requests to services, composition of data.
-- Go Services: realtime WebSocket hub, background workers, high-throughput data processing.
-- PostgreSQL: authoritative relational data, referential integrity, transactions.
-- Cloudflare R2: durable object storage for images, documents and backups.
+**API Gateway** (Node.js): Authentication, request validation, API routing, signed URLs  
+**Services** (Go): Realtime WebSocket, background workers, high-throughput processing  
+**Database** (PostgreSQL): All persistent data  
+**Storage** (Cloudflare R2): Files, images, backups
 
 ## 3. Tech Stack
 
@@ -211,22 +197,66 @@ Testing and migrations
 - This project removed external BaaS dependencies. Any previous SQL or migration files should be migrated to the chosen migration tool and executed against the Render Postgres instance.
 - Update CI/CD pipelines to remove legacy BaaS deployment steps and add Render deployment steps or Docker image publishing.
 
-## Contributing
+## 📚 Documentation
 
-- Follow the repository's branching model and code review process.
-- Use `migrations/` for schema changes and include a migration file per change.
-- Document new environment variables in `.env.example`.
+We maintain lean, non-redundant documentation:
 
-## Appendix — Useful Links
-
-- Render: https://render.com
-- Cloudflare R2: https://developers.cloudflare.com/r2
-- PostgreSQL documentation: https://www.postgresql.org/docs/
+| File | Purpose |
+|------|---------|
+| [START_HERE.md](START_HERE.md) | Quick navigation (choose your path) |
+| [DOCS.md](DOCS.md) | Complete documentation index |
+| [PRODUCTION_DEPLOYMENT_CHECKLIST.md](PRODUCTION_DEPLOYMENT_CHECKLIST.md) | How to deploy to production |
+| [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) | Complete developer reference |
+| [SETUP_GUIDE.md](SETUP_GUIDE.md) | Local environment setup |
+| [DEPLOYMENT_ARCHITECTURE.md](DEPLOYMENT_ARCHITECTURE.md) | Architecture overview |
 
 ---
 
-If you want, I can now:
-- search the repository for remaining Supabase references and list them, or
-- update other docs (e.g., `PANDUAN_PENGEMBANGAN.md`) to remove Supabase mentions.
+## 🚀 Quick Start
 
-Contact: developer-facing documentation only — no Supabase references remain in this README.
+**Deploy to production:**
+```bash
+# Read: PRODUCTION_DEPLOYMENT_CHECKLIST.md
+# Follow: 7 phases (2-3 hours)
+```
+
+**Local development:**
+```bash
+# Read: SETUP_GUIDE.md
+# Run: bash verify-predeployment.sh
+# Code: npm run dev (multiple terminals)
+```
+
+---
+
+## Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite, TailwindCSS
+- **Backend API**: Node.js, Express, TypeScript
+- **Realtime**: Go, Gorilla WebSocket
+- **Database**: PostgreSQL
+- **Storage**: Cloudflare R2
+- **Hosting**: Render.com, GitHub Pages
+
+---
+
+## Contributing
+
+- Follow the code style guide in [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)
+- Create migrations in `supabase/migrations/` for schema changes
+- Document environment variables in `.env.example`
+- Test locally before pushing
+
+---
+
+## Support
+
+- **Setup issues?** → [SETUP_GUIDE.md](SETUP_GUIDE.md)
+- **Deployment help?** → [PRODUCTION_DEPLOYMENT_CHECKLIST.md](PRODUCTION_DEPLOYMENT_CHECKLIST.md)
+- **Questions?** → Check [DOCS.md](DOCS.md) for documentation map
+
+---
+
+**Status**: ✅ Production Ready  
+**Last Updated**: May 1, 2026  
+**License**: [See LICENSE file]
