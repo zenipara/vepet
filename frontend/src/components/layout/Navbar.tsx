@@ -19,7 +19,7 @@ export const Navbar = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
+    <nav className="public-navbar">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <Link to="/" className="flex items-center gap-3 text-white">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/20">
@@ -32,9 +32,9 @@ export const Navbar = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/about" className="text-sm text-slate-300 hover:text-white">Tentang</Link>
-          <Link to="/support" className="text-sm text-slate-300 hover:text-white">Bantuan</Link>
-          <Link to="/contact" className="text-sm text-slate-300 hover:text-white">Kontak</Link>
+          <Link to="/about" className="text-sm text-slate-300 transition-colors hover:text-white">Tentang</Link>
+          <Link to="/support" className="text-sm text-slate-300 transition-colors hover:text-white">Bantuan</Link>
+          <Link to="/contact" className="text-sm text-slate-300 transition-colors hover:text-white">Kontak</Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ export const Navbar = () => {
         </div>
 
         {open && (
-          <div className="absolute left-0 right-0 top-full z-40 bg-slate-950/95 border-t border-white/5 md:hidden">
+          <div className="absolute left-0 right-0 top-full z-40 border-t border-white/10 bg-slate-950/95 md:hidden">
             <div className="mx-auto max-w-7xl px-4 py-4">
               <div className="flex flex-col gap-3">
                 <Link to="/about" onClick={() => setOpen(false)} className="text-slate-200">Tentang</Link>

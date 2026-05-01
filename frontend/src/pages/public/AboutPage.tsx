@@ -11,7 +11,7 @@ export const AboutPage = () => {
         <SEO title="Tentang — VetCare" description="Visi dan misi VetCare untuk klinik hewan modern." />
         <Badge variant="info">Tentang VetCare</Badge>
 
-        <div className="mt-6 space-y-6">
+        <div className="public-reveal mt-6 space-y-6">
           <h1 className="public-page-headline">Visi kami</h1>
           <p className="public-page-subtitle">
             VetCare dibangun untuk membantu klinik hewan memberikan layanan yang lebih cepat,

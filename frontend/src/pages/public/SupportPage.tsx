@@ -25,7 +25,7 @@ export const SupportPage = () => {
         <SEO title="Bantuan — VetCare" description="Pusat bantuan dan FAQ untuk pengguna VetCare." />
         <Badge variant="secondary">Bantuan & Dukungan</Badge>
 
-        <div className="mt-6 space-y-6">
+        <div className="public-reveal mt-6 space-y-6">
           <h1 className="public-page-headline">Pusat bantuan</h1>
           <p className="public-page-subtitle">Temukan jawaban cepat untuk pertanyaan umum tentang penggunaan VetCare.</p>
 

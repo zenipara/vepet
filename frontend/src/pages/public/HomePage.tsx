@@ -253,7 +253,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12">
+      <section className="public-reveal mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8">
           <Badge variant="info">Suara Pengguna</Badge>
           <h2 className="mt-3 text-2xl font-bold">Apa kata mereka tentang VetCare</h2>
@@ -280,7 +280,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12">
+      <section className="public-reveal public-reveal-delay-1 mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8">
           <Badge variant="info">Trusted by</Badge>
           <h2 className="mt-3 text-2xl font-bold">Klinik yang sudah memakai VetCare</h2>
@@ -296,7 +296,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12">
+      <section className="public-reveal public-reveal-delay-2 mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8">
           <Badge variant="secondary">Pertanyaan</Badge>
           <h2 className="mt-3 text-2xl font-bold">Pertanyaan yang sering diajukan</h2>
@@ -306,7 +306,7 @@ export const HomePage = () => {
         <Accordion items={faqs} />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20">
+      <section className="public-reveal mx-auto max-w-7xl px-4 py-20">
         <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl space-y-3">
             <Badge variant="info">Kenapa VetCare</Badge>
@@ -339,7 +339,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-white">
+      <section className="public-reveal border-y border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="space-y-4">
             <Badge variant="secondary">Alur layanan</Badge>
@@ -377,7 +377,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20">
+      <section className="public-reveal mx-auto max-w-7xl px-4 py-20">
         <div className="grid gap-6 rounded-[2rem] bg-gradient-to-r from-emerald-600 to-teal-500 px-6 py-10 text-white lg:grid-cols-[1fr_auto] lg:items-center lg:px-10">
           <div className="space-y-3">
             <Badge variant="success" className="bg-white/10 text-emerald-50 ring-1 ring-white/10">
