@@ -3,14 +3,15 @@ import { usePets } from '@/features/pets/hooks/usePets'
 import { PetCard } from '@/features/pets/components/PetCard'
 import { PetForm } from '@/features/pets/components/PetForm'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
-import { Plus, X } from 'lucide-react'
+import { Plus, X, PawPrint } from 'lucide-react'
 import type { Pet } from '@/types/global'
 
 export const PetsPage = () => {
   const { pets, loading, refetch } = usePets()
   const [showForm, setShowForm] = useState(false)
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const handleDelete = async (petId: string) => {
@@ -30,7 +31,6 @@ export const PetsPage = () => {
 
   const handleSuccess = async () => {
     setShowForm(false)
-    setSelectedPet(null)
     await refetch()
   }
 
@@ -43,44 +43,50 @@ export const PetsPage = () => {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Hewan Peliharaan</h1>
-          <p className="text-gray-600">Kelola dan pantau kesehatan hewan-hewan Anda</p>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <Badge variant="info" className="w-fit">Data Hewan</Badge>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Hewan Peliharaan</h1>
+            <p className="mt-2 max-w-2xl text-slate-600">Kelola dan pantau kesehatan hewan-hewan Anda dalam tampilan yang lebih seragam.</p>
+          </div>
         </div>
         {!showForm && (
           <Button onClick={() => setShowForm(true)}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Tambah Hewan
           </Button>
         )}
       </div>
 
       {showForm && (
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Form Hewan Baru</h2>
+        <div className="space-y-4 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Form Hewan Baru</h2>
             <button
               onClick={() => setShowForm(false)}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
-              <X className="w-5 h-5" />
+              <X className="h-5 w-5" />
             </button>
           </div>
           <PetForm onSuccess={handleSuccess} onCancel={() => setShowForm(false)} />
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {pets.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-600 mb-4">Anda belum memiliki hewan peliharaan</p>
+          <Card className="col-span-full border-slate-200 bg-white text-center shadow-sm">
+            <div className="space-y-4 py-12">
+              <PawPrint className="mx-auto h-10 w-10 text-emerald-600" />
+              <p className="text-slate-600">Anda belum memiliki hewan peliharaan</p>
+            </div>
             <Button onClick={() => setShowForm(true)}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Tambah Hewan Pertama
             </Button>
-          </div>
+          </Card>
         ) : (
           pets.map(pet => (
             <PetCard

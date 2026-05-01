@@ -43,21 +43,21 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h4 className="font-bold text-lg">{booking.pets?.name}</h4>
-          <p className="text-sm text-gray-600">{booking.services?.name}</p>
+          <p className="text-sm text-slate-600">{booking.services?.name}</p>
         </div>
         <Badge variant={statusVariant}>{statusLabel}</Badge>
       </div>
 
       <div className="space-y-2 text-sm mb-4">
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-slate-600">
           <Clock className="w-4 h-4" />
           <span>
             {formattedDate} · {formattedTime}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-gray-600">
-          <Clock className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-slate-600">
+          <MapPin className="w-4 h-4" />
           <span>{booking.duration_min} menit</span>
         </div>
 
@@ -70,8 +70,8 @@ export const BookingCard = ({ booking }: BookingCardProps) => {
       </div>
 
       {booking.notes && (
-        <div className="p-3 bg-blue-50 rounded text-sm text-blue-700 italic">
-          Catatan: {booking.notes}
+        <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 italic border border-slate-200">
+          "{booking.notes}"
         </div>
       )}
     </Card>

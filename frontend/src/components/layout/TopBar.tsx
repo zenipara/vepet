@@ -29,27 +29,27 @@ export const TopBar = () => {
   }
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+    <div className="sticky top-0 z-40 flex items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 py-4 shadow-sm backdrop-blur-sm sm:px-6">
       <div className="flex-1 max-w-md">
         <div className="relative">
-          <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
           <input
             type="text"
             placeholder="Cari..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100"
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-4 ml-6 relative">
+      <div className="relative ml-4 flex items-center gap-3 sm:ml-6 sm:gap-4">
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative"
+            className="relative rounded-2xl p-2.5 text-slate-600 transition-colors hover:bg-slate-100"
           >
-            <Bell className="w-5 h-5 text-gray-600" />
+            <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
                 {unreadCount}
               </span>
             )}
@@ -57,23 +57,23 @@ export const TopBar = () => {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <div className="absolute right-0 top-full z-50 mt-2 max-h-96 w-80 overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl">
               {notifications.length === 0 ? (
-                <div className="p-4 text-center text-gray-600">Tidak ada notifikasi</div>
+                <div className="p-4 text-center text-sm text-slate-600">Tidak ada notifikasi</div>
               ) : (
-                <div className="divide-y">
+                <div className="divide-y divide-slate-100">
                   {notifications.map(notif => (
                     <div
                       key={notif.id}
                       onClick={() => handleNotificationClick(notif.id)}
-                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex justify-between items-start gap-3 ${
+                      className={`flex cursor-pointer items-start justify-between gap-3 p-4 transition-colors hover:bg-slate-50 ${
                         !notif.read ? 'bg-blue-50' : ''
                       }`}
                     >
                       <div className="flex-1">
-                        <h4 className="font-semibold text-sm">{notif.title}</h4>
-                        <p className="text-xs text-gray-600 mt-1">{notif.message}</p>
-                        <p className="text-xs text-gray-500 mt-2">
+                        <h4 className="text-sm font-semibold text-slate-900">{notif.title}</h4>
+                        <p className="mt-1 text-xs text-slate-600">{notif.message}</p>
+                        <p className="mt-2 text-xs text-slate-500">
                           {new Date(notif.created_at).toLocaleString('id-ID')}
                         </p>
                       </div>
@@ -82,9 +82,9 @@ export const TopBar = () => {
                           e.stopPropagation()
                           handleDeleteNotification(notif.id)
                         }}
-                        className="p-1 hover:bg-gray-200 rounded"
+                        className="rounded-lg p-1 hover:bg-slate-200"
                       >
-                        <X className="w-4 h-4 text-gray-600" />
+                        <X className="h-4 w-4 text-slate-600" />
                       </button>
                     </div>
                   ))}
