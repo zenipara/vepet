@@ -19,6 +19,7 @@ Di GitHub repo settings, tambahkan 2 secrets dengan nilai Supabase project tamu:
 Tambahkan:
 - `VITE_SUPABASE_URL` - URL project Supabase Anda (misal: `https://xxx.supabase.co`)
 - `VITE_SUPABASE_ANON_KEY` - Anon key dari Supabase project
+- `SUPABASE_DB_URL` - PostgreSQL connection string untuk deploy migrasi database
 
 ```bash
 # Cek nilai ini di Supabase Dashboard:
@@ -59,6 +60,12 @@ base: process.env.GITHUB_PAGES === 'true' ? '/VetCare/' : '/',
   run: |
     ls -lah frontend/dist/
     find frontend/dist -type f | wc -l
+```
+
+✅ **Database deploy step** untuk Supabase:
+```yaml
+- name: Deploy database migrations to Supabase
+    run: bash scripts/deploy-supabase-db.sh
 ```
 
 ## 🚀 Deployment Flow
@@ -107,6 +114,11 @@ Aplikasi live di: https://zenipara.github.io/VetCare/
    - Buka console browser (F12) di deployed URL
    - Cek jika ada 404 errors untuk static assets
    - Jika assets loading dari `/assets/...` bukan `/VetCare/assets/...`, base path salah
+
+5. **Verify database deployment**:
+    - Pastikan secret `SUPABASE_DB_URL` sudah di-set di GitHub
+    - Cek step `Deploy database migrations to Supabase` di Actions log
+    - Jika ada error SQL, perbaiki file pada `supabase/migrations/` lalu push ulang ke `main`
 
 ### URL Destination
 

@@ -16,6 +16,7 @@ Tambahkan **2 secrets** berikut dengan nilai dari Supabase project Anda:
 ```
 VITE_SUPABASE_URL = https://xxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY = eyJ.... (paste anon key dari Supabase)
+SUPABASE_DB_URL = postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
 ```
 
 **Jika secrets tidak ada**, app akan tetap build ($Vite menggunakan fallback), tapi Supabase client tidak akan terauth dan fitur real-time akan fail.
@@ -31,9 +32,10 @@ GitHub akan menampilkan URL Pages setelah job deploy sukses.
 **Path**: Repository → Actions → Latest "Build & Deploy VetCare System"
 
 Cari error di steps berikut (dalam order):
-1. "Build production" step - jika ada error TypeScript/Vite
-2. "Verify dist folder" step - cek if dist/ tercipta dengan files
-3. "Deploy to GitHub Pages" step - cek if deploy action berjalan
+1. "Deploy database migrations to Supabase" step - jika ada error SQL atau koneksi DB
+2. "Build production" step - jika ada error TypeScript/Vite
+3. "Verify dist folder" step - cek if dist/ tercipta dengan files
+4. "Deploy to GitHub Pages" step - cek if deploy action berjalan
 
 ## 📋 Perubahan yang Sudah Dilakukan
 
@@ -46,7 +48,12 @@ Cari error di steps berikut (dalam order):
      id-token: write      # Perlu untuk OIDC trust
    ```
 
-2. **Added Base Path Configuration** untuk GitHub Pages
+2. **Added Database Deploy Step** ke workflow
+   - Workflow menjalankan `scripts/deploy-supabase-db.sh`
+   - Menggunakan secret `SUPABASE_DB_URL`
+   - Database migration dipush sebelum frontend dibuild
+
+3. **Added Base Path Configuration** untuk GitHub Pages
    ```javascript
    // vite.config.ts
    base: process.env.GITHUB_PAGES === 'true' ? '/VetCare/' : '/'
@@ -54,14 +61,14 @@ Cari error di steps berikut (dalam order):
    - Lokal development: base = `/` (normal)
    - GitHub Pages CI build: base = `/VetCare/` (untuk project repo)
 
-3. **Added Verification Steps** untuk debugging
+4. **Added Verification Steps** untuk debugging
    - Cek dist/ folder ada dan berisi files
    - Cek environment variables set atau tidak
 
-4. **Added GITHUB_PAGES env var** di build step
+5. **Added GITHUB_PAGES env var** di build step
    - Memicu conditional base path di Vite
 
-5. **Migrated deploy ke GitHub Actions resmi**
+6. **Migrated deploy ke GitHub Actions resmi**
    - Build job meng-upload Pages artifact
    - Deploy job memakai `actions/deploy-pages`
 
@@ -87,6 +94,12 @@ WARNING: VITE_SUPABASE_URL not set ← PROBLEM
 ```
 
 Jika ada WARNING, itu berarti secrets tidak tersetting di GitHub.
+
+Jika step database gagal, cek:
+
+1. `SUPABASE_DB_URL` valid dan memakai password database yang benar
+2. Migrations SQL di `supabase/migrations/` bisa dijalankan berurutan
+3. Tabel dan policy yang direferensikan memang sudah dibuat pada migration sebelumnya
 
 ## 📊 Deployment Architecture
 

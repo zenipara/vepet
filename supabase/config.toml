@@ -1,9 +1,41 @@
-# This is a placeholder Supabase config
-# For development, link your project with: supabase link --project-ref <PROJECT_REF>
+# For detailed configuration reference documentation, visit:
+# https://supabase.com/docs/guides/local-development/cli/config
+# A string used to distinguish different Supabase projects on the same host.
+project_id = "VetCare"
 
-[build.functions.build_flags]
-external_node_modules = ["@supabase/supabase-js"]
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
 
-[[env.production.functions."*".policies]]
-name = "Authenticated users only"
-definition = "auth.role() == 'authenticated'"
+[db]
+port = 54322
+shadow_port = 54320
+health_timeout = "2m"
+major_version = 17
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["https://127.0.0.1:3000"]
+
+[storage]
+enabled = true

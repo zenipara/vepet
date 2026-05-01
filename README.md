@@ -98,7 +98,12 @@ npm run build
 ```
 
 ### Backend (Supabase Cloud)
-Semua database & auth sudah managed by Supabase.
+Semua database & auth dikelola oleh Supabase. Saat push ke `main`, GitHub Actions menjalankan migrasi SQL dari `supabase/migrations/` ke database Supabase, lalu melanjutkan build dan deploy GitHub Pages.
+
+Secrets repository yang dibutuhkan:
+- `SUPABASE_DB_URL`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
 ## 🤝 Contributing
 
