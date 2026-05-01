@@ -76,7 +76,7 @@ export const RecoveryPage = () => {
               </div>
               <div>
                 <p className="text-xs text-gray-600 uppercase tracking-wide">Keparahan</p>
-                <Badge variant={inpatientCase.severity === 'critical' ? 'danger' : 'default'}>
+                <Badge variant={inpatientCase.severity === 'critical' ? 'danger' : 'warning'}>
                   {severityLabel}
                 </Badge>
               </div>

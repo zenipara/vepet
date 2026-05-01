@@ -41,6 +41,8 @@ export interface InpatientCase {
   status: 'admitted' | 'lab_test' | 'observation' | 'recovery' | 'discharged'
   severity: 'critical' | 'serious' | 'normal' | 'stable'
   notes?: string
+  // Optional relations
+  pets?: any
 }
 
 export interface CaseUpdate {
@@ -53,6 +55,9 @@ export interface CaseUpdate {
     weight?: number
     temperature?: number
     heart_rate?: number
+    respiratory_rate?: number
+    blood_pressure?: string
+    oxygen_saturation?: number
     notes?: string
   }
   created_at: string
@@ -66,4 +71,5 @@ export interface CasePhoto {
   photo_url: string
   caption?: string
   taken_at: string
+  created_at?: string
 }

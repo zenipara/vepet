@@ -9,6 +9,7 @@ export interface Product {
   price_buy?: number
   price_sell?: number
   stock_qty: number
+  current_stock?: number  // Alias for stock_qty
   min_stock: number
   is_active: boolean
 }

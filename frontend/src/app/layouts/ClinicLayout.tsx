@@ -1,8 +1,9 @@
+import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TopBar } from '@/components/layout/TopBar'
 
-export const ClinicLayout = () => {
+export const ClinicLayout: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar role="staff" />

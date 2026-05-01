@@ -3,11 +3,19 @@ import clsx from 'clsx'
 interface CardProps {
   className?: string
   children: React.ReactNode
+  onClick?: () => void
 }
 
-export const Card = ({ className, children }: CardProps) => {
+export const Card = ({ className, children, onClick }: CardProps) => {
   return (
-    <div className={clsx('bg-white rounded-lg shadow-sm border border-gray-200 p-6', className)}>
+    <div
+      className={clsx(
+        'bg-white rounded-lg shadow-sm border border-gray-200 p-6',
+        onClick && 'cursor-pointer hover:shadow-md transition-shadow',
+        className
+      )}
+      onClick={onClick}
+    >
       {children}
     </div>
   )

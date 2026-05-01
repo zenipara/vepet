@@ -36,4 +36,17 @@ export interface Appointment {
   notes?: string
   created_at: string
   updated_at: string
+  // Optional relations
+  pets?: Pet
+  services?: Service
+}
+
+export interface Service {
+  id: string
+  name: string
+  category: string
+  price: number
+  duration_min: number
+  description?: string
+  is_active: boolean
 }
