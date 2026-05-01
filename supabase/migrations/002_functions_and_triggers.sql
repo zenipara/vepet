@@ -15,7 +15,7 @@ BEGIN
   INSERT INTO public.profiles (id, full_name, role)
   VALUES (
     new.id,
-    new.raw_user_meta_data->>'full_name' OR new.email,
+    COALESCE(new.raw_user_meta_data->>'full_name', new.email),
     'customer'
   );
   RETURN new;
