@@ -11,6 +11,9 @@ import { AdminLayout } from './layouts/AdminLayout'
 // Pages - Public
 import { HomePage } from '@/pages/public/HomePage'
 import { EmergencyPage } from '@/pages/public/EmergencyPage'
+import { AboutPage } from '@/pages/public/AboutPage'
+import { ContactPage } from '@/pages/public/ContactPage'
+import { SupportPage } from '@/pages/public/SupportPage'
 
 // Pages - Auth
 import { LoginPage } from '@/pages/auth/LoginPage'
@@ -44,6 +47,9 @@ export const router = createBrowserRouter(
       children: [
         { path: '/', element: <HomePage /> },
         { path: '/emergency', element: <EmergencyPage /> },
+        { path: '/about', element: <AboutPage /> },
+        { path: '/contact', element: <ContactPage /> },
+        { path: '/support', element: <SupportPage /> },
       ],
     },
     {

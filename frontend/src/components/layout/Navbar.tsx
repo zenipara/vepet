@@ -28,6 +28,12 @@ export const Navbar = () => {
           </span>
         </Link>
 
+        <nav className="hidden md:flex items-center gap-6">
+          <Link to="/about" className="text-sm text-slate-300 hover:text-white">Tentang</Link>
+          <Link to="/support" className="text-sm text-slate-300 hover:text-white">Bantuan</Link>
+          <Link to="/contact" className="text-sm text-slate-300 hover:text-white">Kontak</Link>
+        </nav>
+
         <div className="flex items-center gap-3">
           {user ? (
             <>

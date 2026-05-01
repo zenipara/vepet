@@ -18,7 +18,8 @@ export const Button = ({
   return (
     <button
       className={clsx(
-        'font-medium rounded-lg transition-colors duration-200',
+        'font-medium rounded-lg transition-colors duration-200 transform motion-safe:transition-transform',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-300',
         size === 'sm' && 'px-3 py-1 text-sm',
         size === 'md' && 'px-4 py-2 text-base',
         size === 'lg' && 'px-6 py-3 text-lg',
@@ -26,7 +27,7 @@ export const Button = ({
         variant === 'secondary' && 'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100',
         variant === 'danger' && 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300',
         variant === 'ghost' && 'bg-transparent text-gray-700 hover:bg-gray-100 disabled:text-gray-400',
-        'disabled:cursor-not-allowed',
+        'disabled:cursor-not-allowed active:scale-95',
         className
       )}
       disabled={disabled || loading}
