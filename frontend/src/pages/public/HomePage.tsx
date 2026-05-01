@@ -12,6 +12,7 @@ import {
   Stethoscope,
   Users,
 } from 'lucide-react'
+import { Accordion } from '@/components/ui/Accordion'
 
 export const HomePage = () => {
   const highlights = [
@@ -88,6 +89,33 @@ export const HomePage = () => {
       name: 'Sari',
       role: 'Perawat klinik',
       text: 'Tampilan dashboardnya intuitif — memudahkan penjadwalan dan follow-up.',
+    },
+  ]
+
+  const trusted = [
+    'Klinik Harapan',
+    'PetCare Center',
+    'VetPrima',
+    'Klinik Sehat',
+    'Dr. Hewan Solo',
+    'Klinik Ceria',
+  ]
+
+  const faqs = [
+    {
+      id: 'q1',
+      title: 'Bagaimana cara mendaftar sebagai klinik?',
+      content: 'Anda dapat menghubungi tim sales lewat form kontak atau daftar langsung untuk memulai trial dan onboarding.',
+    },
+    {
+      id: 'q2',
+      title: 'Apakah data pasien aman?',
+      content: 'Semua data terenkripsi dan akses dibatasi berdasarkan peran pengguna di dalam platform.',
+    },
+    {
+      id: 'q3',
+      title: 'Apakah ada biaya bulanan?',
+      content: 'Kami menawarkan paket trial dan beberapa tier langganan, hubungi tim kami untuk penawaran khusus.',
     },
   ]
 
@@ -245,6 +273,32 @@ export const HomePage = () => {
             </Card>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <div className="mb-8">
+          <Badge variant="info">Trusted by</Badge>
+          <h2 className="mt-3 text-2xl font-bold">Klinik yang sudah memakai VetCare</h2>
+          <p className="max-w-2xl text-slate-600">Beberapa klinik mitra yang mempercayakan operasional mereka pada VetCare.</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+          {trusted.map((name) => (
+            <div key={name} className="flex items-center justify-center rounded-lg border border-slate-200 bg-white p-3 text-center text-sm text-slate-700">
+              {name}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <div className="mb-8">
+          <Badge variant="secondary">Pertanyaan</Badge>
+          <h2 className="mt-3 text-2xl font-bold">Pertanyaan yang sering diajukan</h2>
+          <p className="max-w-2xl text-slate-600">Jika pertanyaan Anda tidak tercantum, hubungi kami melalui halaman kontak.</p>
+        </div>
+
+        <Accordion items={faqs} />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20">
