@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import SEO from '@/components/seo/SEO'
+import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   CalendarDays,
@@ -16,6 +17,26 @@ import {
 import { Accordion } from '@/components/ui/Accordion'
 
 export const HomePage = () => {
+  const [hideStickyCta, setHideStickyCta] = useState(false)
+
+  useEffect(() => {
+    const footer = document.getElementById('public-footer')
+    if (!footer) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHideStickyCta(entry.isIntersecting)
+      },
+      { root: null, threshold: 0.08 }
+    )
+
+    observer.observe(footer)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
   const highlights = [
     {
       value: '24/7',
@@ -153,7 +174,7 @@ export const HomePage = () => {
   )
 
   return (
-    <div className="bg-slate-50 text-slate-900">
+    <div className="bg-slate-50 pb-24 text-slate-900 md:pb-0">
       <SEO
         title="VetCare — Platform Klinik Hewan"
         description="Satu platform untuk booking, rekam medis, dan operasional klinik hewan."
@@ -289,7 +310,7 @@ export const HomePage = () => {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           {trusted.map((name) => (
-            <div key={name} className="public-surface-card flex items-center justify-center rounded-lg border border-slate-200 p-3 text-center text-sm font-medium text-slate-700">
+            <div key={name} className="public-trusted-card">
               {name}
             </div>
           ))}
@@ -403,6 +424,23 @@ export const HomePage = () => {
           </div>
         </div>
       </section>
+
+      <div
+        className={`public-sticky-cta transition-all duration-300 ${
+          hideStickyCta ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl gap-3">
+          <Link to="/register" className="w-full">
+            <Button className="w-full">Daftar Gratis</Button>
+          </Link>
+          <Link to="/login" className="w-full">
+            <Button variant="ghost" className="w-full border border-slate-200 text-slate-700 hover:bg-slate-100">
+              Masuk
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }

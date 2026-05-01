@@ -14,6 +14,12 @@
   --vc-cyan: #06b6d4;
 }
 
+.public-theme-vivid {
+  --vc-brand: #0ea5a4;
+  --vc-brand-600: #0f766e;
+  --vc-cyan: #0891b2;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -29,6 +35,13 @@ body {
       radial-gradient(circle at 10% 10%, rgba(16,185,129,0.08), transparent 30%),
       radial-gradient(circle at 90% 20%, rgba(6,182,212,0.07), transparent 28%),
       linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+
+  .public-theme-vivid .public-page-shell {
+    background:
+      radial-gradient(circle at 10% 10%, rgba(14,165,164,0.1), transparent 30%),
+      radial-gradient(circle at 90% 20%, rgba(8,145,178,0.1), transparent 28%),
+      linear-gradient(180deg, #f5fbfb 0%, #eef6f8 100%);
   }
 
   .public-navbar {
@@ -97,6 +110,24 @@ body {
 
   .public-eyebrow {
     @apply text-[11px] uppercase tracking-[0.2em] text-slate-500;
+  }
+
+  .public-sticky-cta {
+    @apply fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/80 bg-white/95 px-4 py-3 backdrop-blur md:hidden;
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .public-trusted-card {
+    @apply public-surface-card flex items-center justify-center rounded-lg border border-slate-200 p-3 text-center text-sm font-semibold text-slate-700;
+    filter: grayscale(1);
+    opacity: 0.84;
+    transition: transform 260ms ease, filter 260ms ease, opacity 260ms ease;
+  }
+
+  .public-trusted-card:hover {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: translateY(-2px);
   }
 
   .public-reveal {

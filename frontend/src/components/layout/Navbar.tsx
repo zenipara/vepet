@@ -5,7 +5,12 @@ import { authService } from '@/features/auth/services/authService'
 import { LogOut, PawPrint, ShieldCheck, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
-export const Navbar = () => {
+type NavbarProps = {
+  theme?: 'soft' | 'vivid'
+  onToggleTheme?: () => void
+}
+
+export const Navbar = ({ theme = 'vivid', onToggleTheme }: NavbarProps) => {
   const { user } = useAuthStore()
 
   const [open, setOpen] = useState(false)
@@ -38,6 +43,14 @@ export const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className="hidden rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 md:inline-flex"
+          >
+            Tema: {theme === 'vivid' ? 'Vivid' : 'Soft'}
+          </button>
+
           {user ? (
             <>
               <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 md:flex">
@@ -83,6 +96,15 @@ export const Navbar = () => {
           <div className="absolute left-0 right-0 top-full z-40 border-t border-white/10 bg-slate-950/95 md:hidden">
             <div className="mx-auto max-w-7xl px-4 py-4">
               <div className="flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onToggleTheme?.()
+                  }}
+                  className="w-fit rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200"
+                >
+                  Tema: {theme === 'vivid' ? 'Vivid' : 'Soft'}
+                </button>
                 <Link to="/about" onClick={() => setOpen(false)} className="text-slate-200">Tentang</Link>
                 <Link to="/support" onClick={() => setOpen(false)} className="text-slate-200">Bantuan</Link>
                 <Link to="/contact" onClick={() => setOpen(false)} className="text-slate-200">Kontak</Link>
