@@ -3,12 +3,23 @@ import type { UserRole } from '@/types/roles'
 
 export const authService = {
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) throw error
-    return data
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error('authService.signIn error:', { error, data })
+        throw new Error(error.message || JSON.stringify(error))
+      }
+
+      console.info('authService.signIn success:', data)
+      return data
+    } catch (err) {
+      console.error('authService.signIn exception:', err)
+      throw err
+    }
   },
 
   async signInWithMagicLink(email: string, redirectTo?: string) {

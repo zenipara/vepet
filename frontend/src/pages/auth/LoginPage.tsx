@@ -33,7 +33,10 @@ export const LoginPage = () => {
       await authService.signIn(formData.email, formData.password)
       // Redirect akan ditangani oleh useAuth hook
     } catch (err: any) {
-      setError(err.message || 'Login gagal. Cek email dan password Anda.')
+      console.error('Login error:', err)
+      setError(
+        err?.message || err?.error?.message || JSON.stringify(err) || 'Login gagal. Cek email dan password Anda.'
+      )
     } finally {
       setLoading(false)
     }
@@ -56,7 +59,8 @@ export const LoginPage = () => {
       await authService.signInWithMagicLink(formData.email, redirectTo)
       setSuccessMessage('Link masuk telah dikirim. Silakan cek email Anda.')
     } catch (err: any) {
-      setError(err.message || 'Gagal mengirim link masuk. Coba lagi.')
+      console.error('Magic link error:', err)
+      setError(err?.message || err?.error?.message || JSON.stringify(err) || 'Gagal mengirim link masuk. Coba lagi.')
     } finally {
       setMagicLinkLoading(false)
     }

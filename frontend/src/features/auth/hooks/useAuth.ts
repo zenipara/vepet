@@ -14,6 +14,7 @@ export const useAuth = () => {
     const checkAuth = async () => {
       try {
         const session = await authService.getSession()
+        console.debug('useAuth.checkAuth session:', session)
         if (session?.user) {
           setUser({
             id: session.user.id,
@@ -38,6 +39,7 @@ export const useAuth = () => {
     // Listen to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.debug('useAuth.onAuthStateChange', { event, session })
         if (event === 'SIGNED_IN' && session) {
           setUser({
             id: session.user.id,
