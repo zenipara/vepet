@@ -1,46 +1,41 @@
-# 🚀 VetCare Deployment Checklist - GitHub Pages & Supabase
+# 🚀 VetCare Deployment Checklist - GitHub Pages & API Gateway
 
 ## Status Deployment Saat Ini
 - ✅ Workflow GitHub Actions sudah configured (`.github/workflows/deploy.yml`)
 - ✅ Vite base path sudah configured untuk GitHub Pages (`/VetCare/`)
-- ✅ Database migration script siap (`scripts/deploy-supabase-db.sh`)
+- ✅ Database migrations ready (`supabase/migrations/*.sql`)
 - ⏳ **MENUNGGU**: GitHub Repository Secrets configuration
 - ⏳ **MENUNGGU**: GitHub Pages activation
 
 ---
 
-## 📋 STEP 1: Siapkan Supabase Credentials
+## 📋 STEP 1: Siapkan Backend Credentials (API Gateway & Database)
 
-### Pergi ke Supabase Dashboard
-**URL**: https://app.supabase.com/
+### Dapatkan nilai dari API Gateway & PostgreSQL instance Anda
 
-### Dapatkan 3 nilai berikut dari project Supabase Anda:
+### Dapatkan 3 nilai berikut:
 
-#### 1️⃣ VITE_SUPABASE_URL
+#### 1️⃣ VITE_API_URL
 ```
-👉 Di Supabase Dashboard:
-   Project Settings → API → Project URL
+👉 API Gateway URL (contoh):
+   https://api.yourdomain.com
+   atau
+   https://vetcare-api.render.com
+```
+
+#### 2️⃣ VITE_API_ANON_KEY
+```
+👉 API anon/public key (jika diperlukan):
+   Dapat diisi dengan placeholder jika tidak digunakan
+```
+
+#### 3️⃣ DATABASE_URL (untuk database migrations)
+```
+👉 PostgreSQL Connection String:
+   Format: postgresql://postgres:<password>@<host>:5432/postgres
    
-   Contoh nilai: https://xxxxxxxx.supabase.co
-```
-
-#### 2️⃣ VITE_SUPABASE_ANON_KEY
-```
-👉 Di Supabase Dashboard:
-   Project Settings → API → anon (public) key
-   
-   Contoh nilai: eyJhbGc....(long string)
-```
-
-#### 3️⃣ SUPABASE_DB_URL (untuk database migrations)
-```
-👉 Di Supabase Dashboard:
-   Project Settings → Database → Connection string
-   
-   Pilih: PostgreSQL
-   
-   Format: 
-   postgresql://postgres:<password>@<host>:5432/postgres?sslmode=require
+   Contoh (Render Managed Postgres):
+   postgresql://postgres:mypassword@dpg-xxxxx.render.internal:5432/vetcare
    
    ⚠️ JANGAN LUPA: Masukkan password database yang benar!
 ```
@@ -58,32 +53,32 @@
 
 ### Tambahkan 3 Secrets Berikut:
 
-#### Secret 1: VITE_SUPABASE_URL
+#### Secret 1: VITE_API_URL
 ```
-Name:  VITE_SUPABASE_URL
-Value: (paste nilai dari Supabase dashboard)
+Name:  VITE_API_URL
+Value: (paste nilai dari API Gateway URL)
 Click: Add secret
 ```
 
-#### Secret 2: VITE_SUPABASE_ANON_KEY
+#### Secret 2: VITE_API_ANON_KEY
 ```
-Name:  VITE_SUPABASE_ANON_KEY
-Value: (paste nilai dari Supabase dashboard)
+Name:  VITE_API_ANON_KEY
+Value: (paste nilai jika diperlukan, atau placeholder)
 Click: Add secret
 ```
 
-#### Secret 3: SUPABASE_DB_URL
+#### Secret 3: DATABASE_URL
 ```
-Name:  SUPABASE_DB_URL
-Value: (paste nilai dari Supabase dashboard)
+Name:  DATABASE_URL
+Value: (paste nilai dari PostgreSQL connection string)
 Click: Add secret
 ```
 
 **✅ Verifikasi**:
 Setelah added, harusnya lihat:
-- ✓ VITE_SUPABASE_URL
-- ✓ VITE_SUPABASE_ANON_KEY
-- ✓ SUPABASE_DB_URL
+- ✓ VITE_API_URL
+- ✓ VITE_API_ANON_KEY
+- ✓ DATABASE_URL
 
 ---
 

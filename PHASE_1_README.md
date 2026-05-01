@@ -176,7 +176,7 @@ Server will run on `http://localhost:5173`
 
 ## 🔗 API Integration Points
 
-### Services Integrated with Supabase:
+### Services Integrated with API Gateway:
 
 #### petService
 ```typescript
@@ -210,7 +210,7 @@ addPrescription()        // Add prescription
 ## ⚠️ Known Limitations (Phase 1 MVP)
 
 1. **No Real-time Updates** - Refresh page to see new data
-   - Phase 2 will add Supabase Realtime subscriptions
+   - Phase 2 will add WebSocket realtime subscriptions
 
 2. **No Recovery Journey Realtime** - Photos/updates need refresh
    - Phase 2 will implement WebSocket for live updates
@@ -299,7 +299,7 @@ npm run reset-db         # Clear all data (careful!)
 **Solution:** Check `.env.local` and verify `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are present
 
 ### Issue: Bookings not saving
-**Solution:** Check RLS policies are enabled and user role is correctly set in Supabase
+**Solution:** Check RLS policies are enabled and user role is correctly set in PostgreSQL
 
 ### Issue: Pets not showing
 **Solution:** Verify `pets` table has data and RLS allows user to read their own pets
@@ -327,7 +327,8 @@ After Phase 1 testing is complete, Phase 2 will implement:
 
 ## 📞 Support & Questions
 
-- 📖 [Supabase Documentation](https://supabase.com/docs)
+- 📖 [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- 📖 [API Gateway Guide](https://github.com/zenipara/VetCare/tree/main/backend)
 - 🐛 [Report Issues](https://github.com/zenipara/VetCare/issues)
 - 💬 [Discussions](https://github.com/zenipara/VetCare/discussions)
 

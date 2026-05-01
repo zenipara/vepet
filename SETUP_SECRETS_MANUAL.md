@@ -12,14 +12,14 @@ Credentials sudah disimpan di file ini untuk reference saat setup. Setelah setup
 ## Credentials yang Akan di-Register
 
 ```
-VITE_SUPABASE_URL:
-  https://mdbositlivrfskbhcdxp.supabase.co
+VITE_API_URL:
+   https://api.yourdomain.com
 
-VITE_SUPABASE_ANON_KEY:
-  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYm9zaXRsaXZyZnNrYmhjZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MjU1MzYsImV4cCI6MjA5MzIwMTUzNn0.yGRC1MlYJCuzetExRu6BwvUncJoDrvAuf456ZHKgzpk
+VITE_API_ANON_KEY:
+   your-api-anon-key
 
-SUPABASE_DB_URL:
-  postgresql://postgres:Kedinasan2020@db.mdbositlivrfskbhcdxp.supabase.co:5432/postgres
+DATABASE_URL:
+   postgresql://postgres:<PASSWORD>@<host>:5432/postgres
 ```
 
 ---
@@ -32,13 +32,13 @@ SUPABASE_DB_URL:
 2. Click **Settings** tab (top navigation)
 3. In left sidebar: **Secrets and variables** → **Actions**
 
-### STEP 2: Add First Secret (VITE_SUPABASE_URL)
+### STEP 2: Add First Secret (VITE_API_URL)
 
 1. Click **"New repository secret"** (green button)
 2. Fill in:
    ```
-   Name:  VITE_SUPABASE_URL
-   Value: https://mdbositlivrfskbhcdxp.supabase.co
+   Name:  VITE_API_URL
+   Value: https://api.yourdomain.com
    ```
 3. Click **"Add secret"**
 
@@ -46,13 +46,13 @@ SUPABASE_DB_URL:
 
 ---
 
-### STEP 3: Add Second Secret (VITE_SUPABASE_ANON_KEY)
+### STEP 3: Add Second Secret (VITE_API_ANON_KEY — optional)
 
 1. Click **"New repository secret"** (green button)
 2. Fill in:
    ```
-   Name:  VITE_SUPABASE_ANON_KEY
-   Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYm9zaXRsaXZyZnNrYmhjZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MjU1MzYsImV4cCI6MjA5MzIwMTUzNn0.yGRC1MlYJCuzetExRu6BwvUncJoDrvAuf456ZHKgzpk
+   Name:  VITE_API_ANON_KEY
+   Value: your-api-anon-key
    ```
 3. Click **"Add secret"**
 
@@ -60,13 +60,13 @@ SUPABASE_DB_URL:
 
 ---
 
-### STEP 4: Add Third Secret (SUPABASE_DB_URL)
+### STEP 4: Add Third Secret (DATABASE_URL)
 
 1. Click **"New repository secret"** (green button)
 2. Fill in:
    ```
-   Name:  SUPABASE_DB_URL
-   Value: postgresql://postgres:Kedinasan2020@db.mdbositlivrfskbhcdxp.supabase.co:5432/postgres
+   Name:  DATABASE_URL
+   Value: postgresql://postgres:<PASSWORD>@<host>:5432/postgres
    ```
 3. Click **"Add secret"**
 
@@ -79,9 +79,9 @@ SUPABASE_DB_URL:
 After all 3 secrets added, you should see:
 
 ```
-🔒 SUPABASE_DB_URL (created just now)
-🔒 VITE_SUPABASE_ANON_KEY (created just now)
-🔒 VITE_SUPABASE_URL (created just now)
+🔒 DATABASE_URL (created just now)
+🔒 VITE_API_ANON_KEY (created just now)
+🔒 VITE_API_URL (created just now)
 ```
 
 All 3 with green 🔒 icons!

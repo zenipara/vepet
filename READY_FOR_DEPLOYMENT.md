@@ -38,18 +38,18 @@
 
 ```
 FIRST SECRET:
-  Name:  VITE_SUPABASE_URL
-  Value: https://mdbositlivrfskbhcdxp.supabase.co
+  Name:  VITE_API_URL
+  Value: https://api.yourdomain.com
   → Click "Add secret"
 
 SECOND SECRET:
-  Name:  VITE_SUPABASE_ANON_KEY
-  Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYm9zaXRsaXZyZnNrYmhjZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MjU1MzYsImV4cCI6MjA5MzIwMTUzNn0.yGRC1MlYJCuzetExRu6BwvUncJoDrvAuf456ZHKgzpk
+  Name:  VITE_API_ANON_KEY
+  Value: your-api-anon-key
   → Click "Add secret"
 
 THIRD SECRET:
-  Name:  SUPABASE_DB_URL
-  Value: postgresql://postgres:Kedinasan2020@db.mdbositlivrfskbhcdxp.supabase.co:5432/postgres
+  Name:  DATABASE_URL
+  Value: postgresql://postgres:<PASSWORD>@<host>:5432/postgres
   → Click "Add secret"
 ```
 
@@ -120,7 +120,7 @@ Live at: https://zenipara.github.io/VetCare/
 │  ├─ Install dependencies                    │
 │  ├─ Type check (npm run type-check)         │
 │  ├─ Lint (npm run lint)                     │
-│  ├─ Build production                        │ ← Uses VITE_SUPABASE_URL
+│  ├─ Build production                        │ ← Uses VITE_API_URL
 │  │   └─ (GITHUB_PAGES=true for base=/VetCare/)
 │  ├─ Verify dist folder                      │
 │  └─ Upload Pages artifact                   │
@@ -242,7 +242,7 @@ DATABASE CHECKS
 
 ## 🆘 If Something Goes Wrong
 
-### Issue: "VITE_SUPABASE_URL not set"
+### Issue: "VITE_API_URL not set"
 
 **Fix**: 
 1. Check all 3 secrets added: https://github.com/zenipara/VetCare/settings/secrets/actions

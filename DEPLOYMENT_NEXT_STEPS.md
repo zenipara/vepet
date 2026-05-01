@@ -15,25 +15,21 @@ Semua persiapan lokal sudah selesai:
 
 ## 📋 LANGKAH YANG PERLU ANDA LAKUKAN (MANUAL)
 
-### STEP 1: Siapkan Supabase Credentials
+### STEP 1: Siapkan credentials untuk API & Postgres
 
-Buka Supabase Dashboard: https://app.supabase.com/
+Persiapkan akses ke API Gateway dan Postgres (Render atau managed instance).
 
-Catat **3 nilai** berikut dari project Anda:
+Catat **3 nilai** berikut:
 
 ```
-1. Project URL
-   👉 Settings → API → Project URL
-   Contoh: https://xxxxx.supabase.co
+1. API Gateway URL
+   👉 (contoh) https://api.yourdomain.com
 
-2. Anon (Public) Key  
-   👉 Settings → API → anon[public] key
-   Contoh: eyJhbGc....(long string)
+2. API anon/public key (opsional)
+   👉 Jika frontend membutuhkan public anon key, dapat diset sebagai `VITE_API_ANON_KEY`
 
 3. Database Connection String
-   👉 Settings → Database → Connection string
-   Pilih: PostgreSQL
-   Format: postgresql://postgres:<PASSWORD>@db..supabase.co:5432/postgres?sslmode=require
+   👉 Managed Postgres (Render): postgresql://postgres:<PASSWORD>@<host>:5432/postgres
    ⚠️  PASTIKAN PASSWORD BENAR!
 ```
 
@@ -46,34 +42,34 @@ Catat **3 nilai** berikut dari project Anda:
 3. Di sidebar kiri: **Secrets and variables → Actions**
 4. Klik **New repository secret**
 
-**Add 3 Secrets berikut:**
+**Add Secrets berikut (GitHub Actions / Render as needed):**
 
-#### Secret 1: VITE_SUPABASE_URL
+#### Secret 1: VITE_API_URL
 ```
-Name:  VITE_SUPABASE_URL
-Value: (paste dari Supabase Project URL)
+Name:  VITE_API_URL
+Value: (paste dari API Gateway URL)
 ```
 Click: **Add secret**
 
-#### Secret 2: VITE_SUPABASE_ANON_KEY
+#### Secret 2: VITE_API_ANON_KEY (optional)
 ```
-Name:  VITE_SUPABASE_ANON_KEY
-Value: (paste dari Supabase anon key)
+Name:  VITE_API_ANON_KEY
+Value: (paste anon/public key untuk frontend jika diperlukan)
 ```
 Click: **Add secret**
 
-#### Secret 3: SUPABASE_DB_URL
+#### Secret 3: DATABASE_URL
 ```
-Name:  SUPABASE_DB_URL  
-Value: (paste dari Supabase Database Connection String)
+Name:  DATABASE_URL  
+Value: (paste dari Postgres connection string)
 ```
 Click: **Add secret**
 
 **✅ Verification**: Setelah selesai, Anda harusnya lihat:
 ```
-🔒 VITE_SUPABASE_URL (updated recently)
-🔒 VITE_SUPABASE_ANON_KEY (updated recently)
-🔒 SUPABASE_DB_URL (updated recently)
+🔒 VITE_API_URL (updated recently)
+🔒 VITE_API_ANON_KEY (updated recently) (if used)
+🔒 DATABASE_URL (updated recently)
 ```
 
 ---

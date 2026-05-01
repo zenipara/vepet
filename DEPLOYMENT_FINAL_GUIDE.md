@@ -3,7 +3,7 @@
 ## 📊 Current Status
 
 ✅ **Database Connection**: VERIFIED  
-✅ **Supabase Project**: mdbositlivrfskbhcdxp (https://mdbositlivrfskbhcdxp.supabase.co)  
+✅ **PostgreSQL Database**: Render Managed Postgres or local instance
 ✅ **Code**: Pushed to GitHub (all TypeScript errors fixed)  
 ✅ **Workflow**: Ready in `.github/workflows/deploy.yml`  
 ✅ **Migrations**: Ready in `supabase/migrations/`  
@@ -183,4 +183,4 @@ APPLICATION LIVE
 **Repository**: https://github.com/zenipara/VetCare  
 **Live Site**: https://zenipara.github.io/VetCare/ (after deployment)  
 **Last Updated**: May 1, 2026
-1. Go to: https://app.supabase.com/
+1. Go to: Your Render dashboard or PostgreSQL management tool

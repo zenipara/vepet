@@ -24,7 +24,7 @@ Tambahkan:
 ```bash
 # Cek nilai ini di Supabase Dashboard:
 # Project → Settings → API
-# - Project URL = VITE_SUPABASE_URL
+# - API URL = VITE_API_URL
 # - anon[public] key = VITE_SUPABASE_ANON_KEY
 ```
 
