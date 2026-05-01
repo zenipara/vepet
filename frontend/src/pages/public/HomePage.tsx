@@ -604,11 +604,13 @@ export const HomePage = () => {
             const Icon = feature.icon
 
             return (
-              <Card 
-                key={feature.title} 
-                className="group h-full border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 overflow-hidden"
+              <div
+                key={feature.title}
                 style={{ transitionDelay: `${idx * 50}ms` }}
               >
+                <Card 
+                  className="group h-full border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 overflow-hidden"
+                >
                 <div className="space-y-4 p-6 relative overflow-hidden">
                   {/* Animated background gradient on hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
@@ -626,6 +628,7 @@ export const HomePage = () => {
                   <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-100 rounded-full opacity-0 group-hover:opacity-20 transition-opacity" />
                 </div>
               </Card>
+              </div>
             )
           })}
         </div>

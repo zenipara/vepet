@@ -297,7 +297,7 @@ export const BookingWizard = ({ pets, services, doctors, onSuccess }: BookingWiz
             type="date"
             value={selectedDate}
             onChange={e => setSelectedDate(e.target.value)}
-            inputProps={{ min: minDate }}
+            min={minDate}
           />
 
           <div className="flex gap-3 mt-8">

@@ -43,13 +43,7 @@ export const Tabs = ({ defaultValue, children, className = '' }: TabsProps) => {
 export const TabsList = ({ children, className = '' }: TabsListProps & any) => {
   return (
     <div className={`flex border-b border-gray-200 ${className}`}>
-      {Array.isArray(children)
-        ? children.map(child =>
-            child?.type?.name === 'TabsTrigger'
-              ? { ...child, props: { ...child.props, ...children.setActiveTab && { setActiveTab: children.setActiveTab } } }
-              : child,
-          )
-        : children}
+      {children}
     </div>
   )
 }

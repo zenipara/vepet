@@ -126,9 +126,18 @@ export const inventoryService = {
 
     // Decrease batch quantity if batch provided
     if (batchId) {
+      // Get current batch quantity first
+      const { data: batch } = await (supabase as any)
+        .from('batches')
+        .select('quantity')
+        .eq('id', batchId)
+        .single()
+
+      const newQuantity = batch ? Math.max((batch.quantity || 0) - quantity, 0) : 0
+
       const { error: batchError } = await supabase
         .from('batches')
-        .update({ quantity: supabase.raw('GREATEST(quantity - ?, 0)', [quantity]) })
+        .update({ quantity: newQuantity })
         .eq('id', batchId)
 
       if (batchError) throw batchError

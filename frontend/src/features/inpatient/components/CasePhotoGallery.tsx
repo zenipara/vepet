@@ -104,9 +104,11 @@ export const CasePhotoGallery = ({ photos, onAddPhoto, uploading }: CasePhotoGal
               <p className="text-xs text-gray-600 mt-2 line-clamp-2">
                 {photo.caption}
               </p>
-              <p className="text-xs text-gray-400">
-                {new Date(photo.created_at).toLocaleDateString('id-ID')}
-              </p>
+              {photo.created_at && (
+                <p className="text-xs text-gray-400">
+                  {new Date(photo.created_at).toLocaleDateString('id-ID')}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -125,9 +127,11 @@ export const CasePhotoGallery = ({ photos, onAddPhoto, uploading }: CasePhotoGal
             />
             <h3 className="font-bold mb-2">Keterangan</h3>
             <p className="text-gray-700 mb-4">{selectedPhoto.caption}</p>
-            <p className="text-xs text-gray-500">
-              Diunggah pada {new Date(selectedPhoto.created_at).toLocaleString('id-ID')}
-            </p>
+            {selectedPhoto.created_at && (
+              <p className="text-xs text-gray-500">
+                Diunggah pada {new Date(selectedPhoto.created_at).toLocaleString('id-ID')}
+              </p>
+            )}
           </div>
         </Modal>
       )}

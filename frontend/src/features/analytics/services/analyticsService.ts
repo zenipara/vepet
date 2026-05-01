@@ -30,7 +30,8 @@ class AnalyticsService {
     this.saveEvent(event)
 
     // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((import.meta as any).env.DEV) {
       console.log('📊 Analytics:', event)
     }
   }
