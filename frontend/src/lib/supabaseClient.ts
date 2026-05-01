@@ -1,22 +1,113 @@
-import { createClient } from '@supabase/supabase-js'
+// Supabase removed. Lightweight shim that proxies basic table operations
+// to a custom API gateway. This is an interim compatibility layer
+// that exposes `supabase.from(table)...` chain used by the frontend services.
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please check .env.local file.'
-  )
+class Query {
+  table: string
+  selectFields: string | null = null
+  filters: Record<string, any> = {}
+  orderBy: { column: string; ascending: boolean } | null = null
+  method: string = 'GET'
+  body: any = null
+  singleFlag = false
+
+  constructor(table: string) {
+    this.table = table
+  }
+
+  select(fields = '*') {
+    this.selectFields = fields
+    return this
+  }
+
+  eq(column: string, value: any) {
+    this.filters[column] = value
+    return this
+  }
+
+  order(column: string, opts: { ascending?: boolean } = {}) {
+    this.orderBy = { column, ascending: opts.ascending ?? true }
+    return this
+  }
+
+  insert(payload: any) {
+    this.method = 'POST'
+    this.body = payload
+    return this
+  }
+
+  update(payload: any) {
+    this.method = 'PATCH'
+    this.body = payload
+    return this
+  }
+
+  delete() {
+    this.method = 'DELETE'
+    return this
+  }
+
+  single() {
+    this.singleFlag = true
+    return this
+  }
+
+  async execute() {
+    try {
+      // Build URL and options based on method and filters
+      let url = `${API_URL.replace(/\/$/, '')}/${this.table}`
+      const headers: Record<string, string> = { 'content-type': 'application/json' }
+
+      // If GET and a single id filter exists, fetch by id
+      if (this.method === 'GET') {
+        const id = this.filters['id']
+        if (id) url = `${url}/${encodeURIComponent(id)}`
+        const params = new URLSearchParams()
+        if (this.selectFields) params.set('_select', this.selectFields)
+        if (this.orderBy) params.set('_order', `${this.orderBy.column}.${this.orderBy.ascending ? 'asc' : 'desc'}`)
+        // include other simple filters as query params
+        Object.keys(this.filters).forEach((k) => {
+          if (k === 'id') return
+          params.set(k, String(this.filters[k]))
+        })
+        const qs = params.toString()
+        if (qs) url += `?${qs}`
+      }
+
+      const resp = await fetch(url, {
+        method: this.method,
+        headers,
+        body: this.method === 'GET' ? undefined : JSON.stringify(this.body),
+      })
+
+      const contentType = resp.headers.get('content-type') || ''
+      let data = null
+      if (contentType.includes('application/json')) data = await resp.json()
+      else data = await resp.text()
+
+      if (!resp.ok) {
+        return { data: null, error: { message: data?.message || resp.statusText, status: resp.status } }
+      }
+
+      // When single() used but response is array, pick first
+      if (this.singleFlag && Array.isArray(data)) data = data[0] || null
+
+      return { data, error: null }
+    } catch (err: any) {
+      return { data: null, error: { message: err.message || 'Unknown error' } }
+    }
+  }
+
+  // Make the Query awaitable: support `await supabase.from(...).select(... )`
+  then(onFulfilled: any, onRejected?: any) {
+    return this.execute().then(onFulfilled, onRejected)
+  }
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
+export const supabase = {
+  from(table: string) {
+    return new Query(table)
   },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
-})
+}

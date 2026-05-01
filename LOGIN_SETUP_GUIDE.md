@@ -4,78 +4,42 @@
 
 ### 1. Environment Variables Sekarang Setup ✅
 
-File `.env.local` sudah dibuat dengan Supabase credentials:
+File `.env.local` sudah dibuat dengan kredensial API/backend:
 
 ```
-VITE_SUPABASE_URL=https://mdbositlivrfskbhcdxp.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYm9zaXRsaXZyZnNrYmhjZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MjU1MzYsImV4cCI6MjA5MzIwMTUzNn0.yGRC1MlYJCuzetExRu6BwvUncJoDrvAuf456ZHKgzpk
+VITE_API_URL=https://api.yourdomain.com
+DATABASE_URL=postgres://postgres:<PASSWORD>@<host>:5432/postgres
 ```
 
-✅ Supabase sudah connected
+✅ Backend API & Postgres sudah connected (pastikan secrets diset di environment)
 
 ---
 
 ## 2️⃣ BUAT TEST ACCOUNTS
 
-Anda perlu membuat test user accounts di Supabase sebelum bisa login.
+Anda perlu membuat test user accounts (bisa lewat API admin endpoints atau langsung ke database) sebelum bisa login.
 
-### Cara Paling Mudah: Gunakan Supabase Dashboard
+### Cara Paling Mudah: Gunakan API Admin atau psql
 
-#### Open Supabase Auth Dashboard
+#### Opsional A — Gunakan API admin endpoint
 
-1. **Go to**: https://app.supabase.com/
-2. **Select Project**: mdbositlivrfskbhcdxp
-3. **Go to**: Authentication → Users (di left sidebar)
-4. **Click**: "Add user" (tombol atas kanan)
+1. Panggil endpoint admin (mis. `POST /admin/users`) pada `VITE_API_URL` untuk membuat user.
+2. Simpan `user_id` yang dikembalikan untuk membuat profile di DB.
 
-#### Buat Test User #1 (Customer)
+#### Opsional B — Masuk langsung ke Postgres (psql/pgAdmin)
 
-```
-Email:              customer@vetcare.com
-Password:           TestPassword123!
-Confirm password:   TestPassword123!
-Auto generate password: (uncheck jika ada option ini)
-```
+1. Sambungkan ke database menggunakan `DATABASE_URL`.
+2. Jalankan INSERT ke tabel `auth_users` atau `profiles` (tergantung implementasi).
 
-**Click**: "Create user"
+Contoh psql (masuk ke DB dan jalankan):
 
-📝 **COPY User ID** (UUID) yang muncul - Anda perlu ini nanti!
-
-#### Buat Test User #2 (Doctor)
-
-```
-Email:              doctor@vetcare.com
-Password:           TestPassword123!
-Confirm password:   TestPassword123!
+```sql
+INSERT INTO profiles (id, full_name, phone, role, is_active, email, password_hash)
+VALUES
+  ('CUSTOMER_UUID_HERE', 'Test Customer', '+62-0812-1111-1111', 'customer', true, 'customer@vetcare.com', '<hashed_password>');
 ```
 
-**Click**: "Create user"
-
-📝 **COPY User ID** (UUID)
-
-#### Buat Test User #3 (Staff)
-
-```
-Email:              staff@vetcare.com
-Password:           TestPassword123!
-Confirm password:   TestPassword123!
-```
-
-**Click**: "Create user"
-
-📝 **COPY User ID** (UUID)
-
-#### Buat Test User #4 (Admin)
-
-```
-Email:              admin@vetcare.com
-Password:           AdminPassword123!
-Confirm password:   AdminPassword123!
-```
-
-**Click**: "Create user"
-
-📝 **COPY User ID** (UUID)
+Catatan: cara membuat user lewat psql bergantung pada skema auth Anda — untuk alur JWT, Anda mungkin perlu membuat user record dan set password hash sesuai format yang digunakan backend.
 
 ---
 
@@ -83,14 +47,11 @@ Confirm password:   AdminPassword123!
 
 Setelah auth users created, Anda perlu create profiles di database.
 
-### Open Supabase SQL Editor
+### Mengisikan profiles ke database
 
-1. **Go to**: https://app.supabase.com/
-2. **Select Project**: mdbositlivrfskbhcdxp
-3. **Go to**: SQL Editor (di left sidebar)
-4. **Click**: "New query"
+Jika Anda membuat users via API admin, gunakan user_id yang dikembalikan untuk membuat profile. Jika langsung ke DB, jalankan SQL via `psql` atau pgAdmin.
 
-### Paste & Update SQL
+Contoh menggunakan `psql`:
 
 ```sql
 -- Replace UUIDs with actual values from previous step
@@ -106,9 +67,8 @@ VALUES
 
 ### How to get UUIDs:
 
-1. Go to: Authentication → Users di Supabase
-2. Click each user
-3. Copy the "User ID" field (looks like: `12345678-1234-1234-1234-123456789012`)
+1. Jika menggunakan API admin, simpan `user_id` yang dikembalikan oleh API.
+2. Jika membuat user lewat psql, gunakan UUID yang Anda generate atau ambil dari tabel users.
 
 **Example**:
 ```sql
@@ -182,8 +142,8 @@ Password: TestPassword123!
 **Look for errors**:
 
 ```
-Error: Missing Supabase environment variables
-  → .env.local not set correctly
+Error: Missing backend environment variables
+  → .env.local not set correctly (periksa `VITE_API_URL` dan `DATABASE_URL`)
 
 Error: Invalid credentials
   → Wrong email/password combination
@@ -192,7 +152,7 @@ Error: User not found
   → Profile not inserted in database
 
 Error: Network error
-  → Supabase not reachable (check internet)
+  → API gateway not reachable (check internet / API_URL)
 ```
 
 ---

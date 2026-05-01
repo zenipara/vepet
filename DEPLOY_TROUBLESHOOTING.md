@@ -1,122 +1,93 @@
-# GitHub Pages Deploy - Troubleshooting Guide
+# GitHub Pages & Backend Deploy - Troubleshooting Guide
 
-## 🔴 Status: Deploy Gagal
+## 🔴 Status: Deploy Issues
 
-Workflow sudah di-update dengan perbaikan untuk GitHub Pages deployment. Namun masih ada hal yang perlu di-verify.
+This guide helps troubleshoot GitHub Pages frontend deploys and backend deployments on Render (Postgres and services). The repository no longer depends on a BaaS provider.
 
 ## 🎯 Action Items (TO-DO)
 
 ### CRITICAL - Harus dikerjakan:
 
-#### 1. ⚠️ Configure Secrets di GitHub Repository
-**Path**: Repository Settings → Secrets and variables → Actions
+#### 1. ⚠️ Configure Secrets in GitHub & Render
+**GitHub Actions (frontend build)**: Repository Settings → Secrets and variables → Actions
 
-Tambahkan **2 secrets** berikut dengan nilai dari Supabase project Anda:
+Add at least the following secrets for the frontend build (if needed):
 
 ```
-VITE_SUPABASE_URL = https://xxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY = eyJ.... (paste anon key dari Supabase)
-SUPABASE_DB_URL = postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
+VITE_API_URL = https://api.yourdomain.com    # Node.js API gateway URL
+GITHUB_PAGES = true                          # used to set Vite base path
 ```
 
-**Jika secrets tidak ada**, app akan tetap build ($Vite menggunakan fallback), tapi Supabase client tidak akan terauth dan fitur real-time akan fail.
+**Render / Backend**: Configure environment & secrets in Render for each service:
 
-#### 2. ✅ Enable GitHub Pages (Jika belum)
+```
+DATABASE_URL         # Render Postgres connection string
+JWT_SECRET
+JWT_REFRESH_SECRET
+CLOUDFLARE_R2_ENDPOINT
+CLOUDFLARE_R2_ACCESS_KEY
+CLOUDFLARE_R2_SECRET_KEY
+R2_BUCKET
+SERVICE_AUTH_TOKEN   # internal service authentication
+```
+
+If these secrets are missing, backend services or signed URL flows may fail.
+
+#### 2. ✅ Enable GitHub Pages (If not enabled)
 **Path**: Repository Settings → Pages
 
-- Set **Source** ke: "GitHub Actions"
-
-GitHub akan menampilkan URL Pages setelah job deploy sukses.
+- Set **Source** to: "GitHub Actions" or the branch used by the deploy workflow.
 
 #### 3. 🔍 Check Workflow Run Logs
 **Path**: Repository → Actions → Latest "Build & Deploy VetCare System"
 
-Cari error di steps berikut (dalam order):
-1. "Deploy database migrations to Supabase" step - jika ada error SQL atau koneksi DB
-2. "Build production" step - jika ada error TypeScript/Vite
-3. "Verify dist folder" step - cek if dist/ tercipta dengan files
-4. "Deploy to GitHub Pages" step - cek if deploy action berjalan
+Look for failures in these steps:
+1. Frontend Build (`frontend`): TypeScript/Vite errors
+2. Verify dist folder: check `frontend/dist/` exists and contains files
+3. Upload/Deploy Pages: check `actions/upload-pages-artifact` and `actions/deploy-pages`
 
-## 📋 Perubahan yang Sudah Dilakukan
+If frontend builds but API calls fail in the browser, verify `VITE_API_URL` and CORS configuration on the API.
 
-### ✅ Fixed in Latest Commit:
+## 📋 Recent Changes
 
-1. **Added Permissions Block** ke workflow
-   ```yaml
-   permissions:
-     pages: write         # Perlu untuk GitHub Pages
-     id-token: write      # Perlu untuk OIDC trust
-   ```
-
-2. **Added Database Deploy Step** ke workflow
-   - Workflow menjalankan `scripts/deploy-supabase-db.sh`
-   - Menggunakan secret `SUPABASE_DB_URL`
-   - Database migration dipush sebelum frontend dibuild
-
-3. **Added Base Path Configuration** untuk GitHub Pages
-   ```javascript
-   // vite.config.ts
-   base: process.env.GITHUB_PAGES === 'true' ? '/VetCare/' : '/'
-   ```
-   - Lokal development: base = `/` (normal)
-   - GitHub Pages CI build: base = `/VetCare/` (untuk project repo)
-
-4. **Added Verification Steps** untuk debugging
-   - Cek dist/ folder ada dan berisi files
-   - Cek environment variables set atau tidak
-
-5. **Added GITHUB_PAGES env var** di build step
-   - Memicu conditional base path di Vite
-
-6. **Migrated deploy ke GitHub Actions resmi**
-   - Build job meng-upload Pages artifact
-   - Deploy job memakai `actions/deploy-pages`
+1. **Removed BaaS deployment steps** from CI and replaced them with guidance for Render-managed services.
+2. **Added verification steps** in the workflow to list `frontend/dist/` contents.
+3. **Frontend build now relies on `VITE_API_URL`** and `GITHUB_PAGES` for base path configuration.
 
 ## 🚀 Next Steps
 
 ### Immediate (Now):
 1. Go to: `https://github.com/zenipara/VetCare/settings/secrets/actions`
-2. Tambahkan VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY
-3. Go to: `https://github.com/zenipara/VetCare/settings/pages`
-4. Verify Pages source sudah set ke `gh-pages` branch
+2. Add `VITE_API_URL` (point to your API gateway) and set `GITHUB_PAGES=true` for CI if publishing to a subpath.
+3. Configure Render services with the environment variables listed above.
 
 ### Then:
 1. Open: `https://github.com/zenipara/VetCare/actions`
-2. Click latest "Build & Deploy VetCare System" run
-3. Debug output akan terlihat di each step
+2. Re-run latest workflow or push a new commit
+3. Inspect logs for the exact failing step and error messages
 
 ### If Still Failing:
-Check "Verify dist folder" step output untuk lihat:
-```
-✓ VITE_SUPABASE_URL is set      ← OK
-✓ VITE_SUPABASE_ANON_KEY is set ← OK
-WARNING: VITE_SUPABASE_URL not set ← PROBLEM
-```
-
-Jika ada WARNING, itu berarti secrets tidak tersetting di GitHub.
-
-Jika step database gagal, cek:
-
-1. `SUPABASE_DB_URL` valid dan memakai password database yang benar
-2. Migrations SQL di `supabase/migrations/` bisa dijalankan berurutan
-3. Tabel dan policy yang direferensikan memang sudah dibuat pada migration sebelumnya
+- For frontend build errors: capture the TypeScript/Vite stack trace and fix code issues or dependencies.
+- For deploy issues: verify artifact upload step shows files and `actions/deploy-pages` has permissions (`pages: write`, `id-token: write`).
+- For API/runtime errors: check Render service logs and ensure `DATABASE_URL` and R2 credentials are correct.
 
 ## 📊 Deployment Architecture
 
 ```
-Local (MacOS/Windows)
-    └─ npm run build
-         └─ Creates /frontend/dist/ with base=/
+Local (Dev)
+  └─ Frontend: pnpm run dev (Vite)
+  └─ API: node backend/api (local)
+  └─ Realtime: go run backend/realtime
 
 CI/CD (GitHub Actions)
-    └─ npm run build (with GITHUB_PAGES=true)
-         └─ Creates /frontend/dist/ with base=/VetCare/
-       └─ Upload Pages artifact
-          └─ GitHub Actions deploy-pages publishes site
-             └─ GitHub Pages serves from https://zenipara.github.io/VetCare/
-                   ├─ index.html (served at /VetCare/)
-                   ├─ assets/... (served at /VetCare/assets/)
-                   └─ React Router handles routes from /VetCare/ base
+  └─ Build frontend (Vite) -> upload artifact -> deploy to GitHub Pages
+
+Production Hosting
+  ├─ Frontend: GitHub Pages (static)
+  ├─ API Gateway: Render Web Service (Node.js)
+  ├─ Go Services: Render Web Services (realtime / workers)
+  └─ Database: Render Managed PostgreSQL
+  └─ Storage: Cloudflare R2 (signed uploads)
 ```
 
 ## 🔗 Final URL After Deploy Succeeds
@@ -125,20 +96,19 @@ CI/CD (GitHub Actions)
 https://zenipara.github.io/VetCare/
 ```
 
-(Update this in any documentation or shared links)
+Update links in docs to point to your production `VITE_API_URL` and Render dashboard.
 
 ## 📞 Support
 
-Jika masih gagal setelah setup:
-
-1. **Buka Actions log** dan screenshot error message
-2. **Check build output** di "Build production" step - ada TypeScript error?
-3. **Check dist folder** di "Verify dist folder" step - files ada?
-4. **Check deploy step** - ada error dari actions/deploy-pages?
+If issues persist:
+1. Capture failing workflow step logs (Actions → run → failed step)
+2. Check Render service logs for backend errors
+3. Verify `DATABASE_URL` and R2 credentials in Render
+4. Re-run build after fixing env vars
 
 ---
 
-**Last Updated**: May 1, 2026  
-**Workflow**: `.github/workflows/deploy.yml`  
-**Config**: `frontend/vite.config.ts`  
-**Doc**: `GITHUB_PAGES_SETUP.md`
+**Last Updated**: May 1, 2026
+**Workflow**: `.github/workflows/deploy.yml`
+**Config**: `frontend/vite.config.ts`
+**Doc**: `DEPLOYMENT_CHECKLIST.md`

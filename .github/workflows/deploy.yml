@@ -12,7 +12,8 @@ jobs:
     permissions:
       contents: read
     env:
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      # Set frontend build variables via repository secrets if needed
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
     steps:
       - name: Checkout code
@@ -28,23 +29,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package.json
 
-      - name: Install PostgreSQL client
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && env.SUPABASE_DB_URL != ''
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
-
-      - name: Warn when SUPABASE_DB_URL is missing
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && env.SUPABASE_DB_URL == ''
-        run: echo "⚠️ SUPABASE_DB_URL is not set. Skipping database migrations for this deploy."
-
-      - name: Deploy database migrations to Supabase
-        id: db_migrate
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && env.SUPABASE_DB_URL != ''
-        continue-on-error: true
-        run: bash scripts/deploy-supabase-db.sh
-
-      - name: Warn when database migration fails
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.db_migrate.outcome == 'failure'
-        run: echo "⚠️ Database migration failed (likely network/endpoint issue). Continuing frontend deploy to GitHub Pages."
+      # Database migrations are run separately against the chosen Postgres instance
+      # (e.g., Render Managed Postgres). Remove any BaaS-specific migration steps.
 
       - name: Install dependencies
         working-directory: ./frontend
@@ -62,8 +48,7 @@ jobs:
         working-directory: ./frontend
         run: npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
           GITHUB_PAGES: 'true'
 
       - name: Verify dist folder
@@ -74,11 +59,9 @@ jobs:
           find frontend/dist -type f | wc -l
           echo ""
           echo "Checking environment variables:"
-          [ -z "$VITE_SUPABASE_URL" ] && echo "WARNING: VITE_SUPABASE_URL not set" || echo "✓ VITE_SUPABASE_URL is set"
-          [ -z "$VITE_SUPABASE_ANON_KEY" ] && echo "WARNING: VITE_SUPABASE_ANON_KEY not set" || echo "✓ VITE_SUPABASE_ANON_KEY is set"
+          [ -z "$VITE_API_URL" ] && echo "WARNING: VITE_API_URL not set" || echo "✓ VITE_API_URL is set"
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

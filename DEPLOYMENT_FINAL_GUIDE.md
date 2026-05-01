@@ -33,303 +33,154 @@ Value: https://mdbositlivrfskbhcdxp.supabase.co
 **Then**: Click "Add secret"
 
 ---
+# ⚡ VetCare Deployment - Final Configuration Guide
 
-### Secret 2️⃣: VITE_SUPABASE_ANON_KEY
+## Goal
 
-**When prompted:**
-```
-Name:  VITE_SUPABASE_ANON_KEY
-Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYm9zaXRsaXZyZnNrYmhjZHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MjU1MzYsImV4cCI6MjA5MzIwMTUzNn0.yGRC1MlYJCuzetExRu6BwvUncJoDrvAuf456ZHKgzpk
-```
+Complete migration from BaaS-based docs to custom backend deployment using Render (services & Postgres), Cloudflare R2 for storage, and GitHub Pages for the frontend.
 
-**Then**: Click "Add secret"
+## 📊 Current Status
+
+✅ **Code**: Pushed to GitHub (TypeScript checks present)  
+✅ **Workflow**: `.github/workflows/deploy.yml` handles frontend build & pages deploy  
+✅ **Migrations**: SQL files present in `supabase/migrations/` for database schema (can be applied to Render Postgres)
+
+⏳ **Pending**: Configure Render services and update CI to run any DB migration tool you choose (psql, golang-migrate, etc.).
 
 ---
 
-### Secret 3️⃣: SUPABASE_DB_URL
+## 🔐 PART 1: Configure Hosting & Secrets
 
-**When prompted:**
+### Render (Backend Services & Database)
+
+On Render, create the following services:
+
+- `api-gateway` (Node.js service)
+- `realtime-service` (Go WebSocket service)
+- `worker-*` (optional background workers)
+- Managed PostgreSQL instance (Render Managed DB)
+
+In each service's environment settings, add the required secrets:
+
 ```
-Name:  SUPABASE_DB_URL
-Value: postgresql://postgres:Kedinasan2020@db.mdbositlivrfskbhcdxp.supabase.co:5432/postgres
+DATABASE_URL
+JWT_SECRET
+JWT_REFRESH_SECRET
+CLOUDFLARE_R2_ENDPOINT
+CLOUDFLARE_R2_ACCESS_KEY
+CLOUDFLARE_R2_SECRET_KEY
+R2_BUCKET
+SERVICE_AUTH_TOKEN
 ```
 
-**Then**: Click "Add secret"
+### GitHub Actions (Frontend)
+
+Add the following repository Actions secrets if your build requires them:
+
+```
+VITE_API_URL    # e.g. https://api.yourdomain.com
+GITHUB_PAGES    # set to 'true' if building for GitHub Pages path
+```
 
 ---
 
 ## 📄 PART 2: Enable GitHub Pages
 
-### Go to GitHub Pages Settings
-
-**URL**: https://github.com/zenipara/VetCare/settings/pages
-
-### Configure Source
-
-Under "Build and deployment" section:
-
-**Source**: Select **"GitHub Actions"** from dropdown
-
-**Then**: Click "Save" (if button appears)
+1. Go to: `https://github.com/zenipara/VetCare/settings/pages`
+2. Set **Source** to **GitHub Actions** (if using `actions/deploy-pages`).
 
 ---
 
-## 🚀 PART 3: Trigger Deployment Workflow
+## 🚀 PART 3: Trigger Deployment
 
-### Option A: Manual Trigger (Recommended)
+Trigger the existing workflow by pushing to `main` or run the workflow manually in GitHub Actions. The job builds the frontend and publishes to GitHub Pages.
 
-1. Go to: https://github.com/zenipara/VetCare/actions
-2. Select: **"Build & Deploy VetCare System"** workflow
-3. Click: **"Run workflow"** button
-4. Select: **main** branch
-5. Click: **"Run workflow"** button
-
-**Workflow starts immediately!**
-
----
-
-### Option B: Automatic Trigger
-
-Any push to `main` branch will auto-trigger workflow.
+If you want backend services deployed via GitHub Actions, configure separate workflows to build/push Docker images or use Render's GitHub integration.
 
 ---
 
 ## 📈 PART 4: Monitor Deployment
 
-### Go to GitHub Actions
+Check both GitHub Actions and Render dashboard:
 
-**URL**: https://github.com/zenipara/VetCare/actions
+- GitHub Actions: frontend build logs and `actions/deploy-pages` steps
+- Render: service build logs, startup logs, health checks, and Postgres instance status
 
-**Watch the workflow**:
-
-```
-1️⃣  Checkout code        ✅
-2️⃣  Setup Pages          ✅
-3️⃣  Setup Node.js        ✅
-4️⃣  Install PostgreSQL   ✅
-5️⃣  Deploy DB migrations ⏳ (This one takes time)
-6️⃣  Install dependencies ⏳
-7️⃣  Type check           ⏳
-8️⃣  Linter              ⏳
-9️⃣  Build production    ⏳
-🔟 Verify dist folder    ⏳
-1️⃣1️⃣ Upload artifact      ⏳
-1️⃣2️⃣ Deploy to Pages     ⏳
-```
-
-**Expected**: All steps turn 🟢 GREEN
-
-**Total time**: ~5-10 minutes
+Common checks:
+- Frontend build: TypeScript errors, missing imports
+- `frontend/dist/` contains built assets
+- API reachable at `VITE_API_URL`
+- Render service logs for runtime errors
 
 ---
 
 ## 🎯 PART 5: Verify Deployment Success
 
-### Check GitHub Pages Status
+Frontend:
 
-1. Go to: https://github.com/zenipara/VetCare/settings/pages
-2. Look for: "Your site is live at..."
-3. URL should be: **https://zenipara.github.io/VetCare/**
+1. Visit `https://zenipara.github.io/VetCare/` and verify homepage loads
+2. Open browser console and confirm API calls are made to `VITE_API_URL`
 
----
+Backend:
 
-### Open Application in Browser
-
-1. Visit: https://zenipara.github.io/VetCare/
-2. Should see: **VetCare homepage** loading
-3. Check:
-   - ✅ Navigation menu works
-   - ✅ Login button visible
-   - ✅ Images loading
-   - ✅ Responsive design (resize browser)
-
----
-
-### Verify Supabase Integration
-
-1. Open browser **Console** (F12 → Console tab)
-2. You should see logs about Supabase client initialization:
-   ```
-   ✓ Supabase client initialized
-   ✓ Auth session loaded
-   ✓ Real-time subscriptions ready
-   ```
-3. No errors should appear in console
+1. Check Render service health and logs
+2. Verify database connectivity from services (no connection errors)
+3. Confirm signed URL flows for uploads to Cloudflare R2 work end-to-end
 
 ---
 
 ## 🧪 PART 6: Test Core Features
 
-### Feature 1: Public Pages
-- [ ] Homepage loads (https://zenipara.github.io/VetCare/)
-- [ ] About page accessible
-- [ ] Contact page accessible
-- [ ] Emergency page accessible
-
-### Feature 2: Authentication
-- [ ] Can navigate to login (/login)
-- [ ] Form renders properly
-- [ ] Can enter credentials
-
-### Feature 3: Database Integration
-Open browser console (F12) and check for errors when:
-- [ ] Page loads (Supabase connection)
-- [ ] Login attempted (Auth check)
-- [ ] Navigating between pages (Real-time)
-
----
-
-## ✨ PART 7: Database Verification
-
-### Check Supabase Dashboard
-
-1. Go to: https://app.supabase.com/
-2. Select project: **mdbositlivrfskbhcdxp**
-3. Check **SQL Editor** or **Table Editor**
-
-**Expected tables**:
-```
-✅ profiles          (User profiles)
-✅ pets              (Pet records)
-✅ bookings          (Booking records)
-✅ appointments      (Appointment details)
-✅ emr_records       (Medical records)
-✅ services          (Available services)
-✅ clinic_staff      (Staff details)
-... and more
-```
-
-All tables should be created by migrations!
+1. Authentication (login / refresh token flow)
+2. Booking creation and status updates
+3. EMR create/read
+4. File upload using signed URL (R2)
+5. Realtime notifications via WebSocket (Reatime Go service)
 
 ---
 
 ## 📋 Deployment Checklist
 
-Before declaring success, verify:
-
 ```
 GITHUB CONFIGURATION
-☑️ VITE_SUPABASE_URL secret added
-☑️ VITE_SUPABASE_ANON_KEY secret added
-☑️ SUPABASE_DB_URL secret added
+☑️ VITE_API_URL set in repository secrets
 ☑️ GitHub Pages enabled (source: GitHub Actions)
 
+RENDER CONFIGURATION
+☑️ API gateway created and configured
+☑️ Realtime & worker services created
+☑️ Managed Postgres provisioned and DATABASE_URL set
+☑️ Cloudflare R2 credentials set for services
+
 WORKFLOW EXECUTION
-☑️ Workflow triggered successfully
-☑️ All steps completed (🟢 PASSED)
-☑️ Database migrations deployed
-☑️ Frontend build successful
-☑️ Artifact uploaded to Pages
+☑️ Frontend build succeeded
+☑️ Artifact uploaded and Pages deployed
 
 APPLICATION LIVE
 ☑️ Site URL active: https://zenipara.github.io/VetCare/
-☑️ Homepage loads
-☑️ Browser console no errors
-☑️ Navigation works
-
-SUPABASE INTEGRATION
-☑️ All tables created in Supabase
-☑️ RLS policies applied
-☑️ Triggers & functions active
-☑️ Supabase client connects from app
-
-FEATURE TESTING
-☑️ Public pages accessible
-☑️ Authentication UI visible
-☑️ Form validation works
-☑️ No JavaScript errors
+☑️ Frontend can call API gateway and receive valid responses
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### ❌ Workflow Failed: "VITE_SUPABASE_URL not set"
-
-**Solution**:
-1. Check: https://github.com/zenipara/VetCare/settings/secrets/actions
-2. Verify all 3 secrets present
-3. Re-run workflow
-
-### ❌ Build Failed: "npm ERR! ..."
-
-**Solution**:
-1. Check "Build production" step in workflow log
-2. Look for TypeScript or compilation error
-3. Report error details
-
-### ❌ Database Migration Failed
-
-**Solution**:
-1. Check SUPABASE_DB_URL correct (with password!)
-2. Verify network connectivity to Supabase
-3. Check Supabase project status (not in maintenance)
-
-### ❌ GitHub Pages URL not showing
-
-**Solution**:
-1. Wait 2-3 minutes after workflow succeeds
-2. Refresh: https://github.com/zenipara/VetCare/settings/pages
-3. Check if gh-pages branch created
-
-### ⚠️ Site loads but blank/404
-
-**Solution**:
-1. Check browser console for errors (F12)
-2. Verify base path `/VetCare/` in vite.config.ts
-3. Check dist/ folder was created in workflow
-
----
-
-## 🕐 Timeline
-
-```
-Now:
-  ↓ Setup secrets & pages (5 min) 
-  ↓ Trigger workflow (1 min)
-  ↓ Workflow runs (5-10 min)
-  ↓ Check Pages settings (1 min)
-  ↓ Test application (2 min)
-  
-Total: ~20 minutes to fully live! 🚀
-```
+- If frontend build fails: inspect the TypeScript/Vite error in Actions logs and fix dependencies.
+- If API calls fail in browser: verify `VITE_API_URL` and CORS policy on the API.
+- If database migrations fail: run migrations manually against Render Postgres using `psql` or your migration runner and check for SQL errors.
+- If signed URL uploads fail: verify Cloudflare R2 keys and bucket name.
 
 ---
 
 ## 📞 Need Help?
 
-**Deployment-specific docs**:
-- `DEPLOYMENT_CHECKLIST.md` - Full setup guide
-- `DEPLOY_TROUBLESHOOTING.md` - Common issues
-- `DEPLOYMENT_STATUS.md` - Architecture details
-
-**GitHub Actions logs**:
-- URL: https://github.com/zenipara/VetCare/actions
-- Click latest workflow run
-- Click failed step for error details
-
-**Supabase issues**:
-- Dashboard: https://app.supabase.com/
-- Query editor to test database
-- Check project status/logs
-
----
-
-## ✅ Summary
-
-**What you need to do**:
-1. Add 3 GitHub secrets (3 min)
-2. Enable GitHub Pages (1 min)
-3. Trigger workflow (1 min)
-4. Wait for completion (5-10 min)
-5. Test application (2 min)
-
-**Total time**: ~20 minutes to full deployment! 
-
-Start with Part 1 above! 🚀
+- Check GitHub Actions logs: https://github.com/zenipara/VetCare/actions
+- Check Render service logs in the Render dashboard
+- Check your Cloudflare R2 dashboard for storage issues
 
 ---
 
 **Repository**: https://github.com/zenipara/VetCare  
 **Live Site**: https://zenipara.github.io/VetCare/ (after deployment)  
 **Last Updated**: May 1, 2026
+1. Go to: https://app.supabase.com/

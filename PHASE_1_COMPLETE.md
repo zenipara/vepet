@@ -2,7 +2,7 @@
 
 ## Ringkasan Hasil Pengembangan
 
-Semua komponen **Phase 1 MVP** telah berhasil diimplementasikan dan terintegrasi dengan Supabase. Sistem siap untuk testing end-to-end.
+Semua komponen **Phase 1 MVP** telah berhasil diimplementasikan. Sistem kini menggunakan backend kustom (Node.js API + Go services) dengan PostgreSQL sebagai sumber data. Sistem siap untuk testing end-to-end.
 
 ---
 
@@ -141,22 +141,21 @@ Semua komponen **Phase 1 MVP** telah berhasil diimplementasikan dan terintegrasi
 
 ```bash
 # 1. Install dependencies
-cd frontend && npm install
+cd frontend && pnpm install
 
-# 2. Setup environment
+# 2. Setup environment (frontend)
 cat > .env.local << EOF
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_API_URL=http://localhost:4000
 EOF
 
-# 3. Run migrations
-npx supabase db push
+# 3. Apply migrations to your PostgreSQL instance
+psql "$DATABASE_URL" -f supabase/migrations/001_initial_schema.sql
 
 # 4. Seed data
-npm run seed
+psql "$DATABASE_URL" -f supabase/seed.sql
 
 # 5. Start dev server
-npm run dev
+pnpm run dev
 ```
 
 **Login dengan:**
@@ -191,10 +190,10 @@ Lihat [PHASE_1_README.md](./PHASE_1_README.md) untuk detailed testing guide.
 - Add EMR entries
 - Track treatments
 
-### 4. **Real Data from Supabase**
-- Semua data di-fetch dari database
-- RLS policies protect user data
-- Proper error handling
+### 4. **Real Data from PostgreSQL (via API)**
+- Semua data di-fetch melalui Node.js API Gateway dari PostgreSQL
+- Database policies and permissions enforced at DB/service layer
+- Proper error handling and validation on API layer
 
 ---
 

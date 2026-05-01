@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 # Configuration
 GITHUB_REPO="zenipara/VetCare"
 LIVE_URL="https://zenipara.github.io/VetCare/"
-SUPABASE_URL="https://mdbositlivrfskbhcdxp.supabase.co"
+API_URL="https://api.yourdomain.com" # replace with your API gateway URL
 
 # Helper functions
 check_url() {
@@ -47,14 +47,11 @@ check_github_actions() {
     fi
 }
 
-check_supabase_tables() {
-    echo -n "Checking Supabase tables... "
-    local db_url="postgresql://postgres@db.mdbositlivrfskbhcdxp.supabase.co:5432/postgres"
-    
-    # This would need credentials - for now just manual check
+check_postgres_schema() {
+    echo -n "Checking Postgres schema... "
+    # This is a manual check placeholder - credentials required for automated checks
     echo -e "${YELLOW}⚠️  MANUAL CHECK${NC}"
-    echo "   Visit: https://app.supabase.com/ → SQL Editor"
-    echo "   Expected tables: profiles, pets, bookings, appointments, emr_records, ..."
+    echo "   Visit your Postgres instance (Render dashboard or psql) and verify expected tables: profiles, pets, bookings, appointments, emr_records, ..."
 }
 
 # Checks
@@ -68,10 +65,10 @@ echo "-------------------"
 check_url "$LIVE_URL" "VetCare homepage"
 echo ""
 
-echo "3. Supabase Backend"
+echo "3. API Backend"
 echo "-------------------"
-check_url "$SUPABASE_URL" "Supabase API"
-check_supabase_tables
+check_url "$API_URL" "API Gateway"
+check_postgres_schema
 echo ""
 
 echo "4. Verification Checklist"
@@ -83,9 +80,9 @@ checks=(
     "Homepage loads and displays correctly"
     "Navigation menu works"
     "Login page accessible at /login"
-    "Supabase tables created (check dashboard)"
-    "RLS policies applied in Supabase"
-    "Real-time subscriptions working"
+    "Database tables created (check Postgres)"
+    "DB policies applied (where applicable)"
+    "Realtime service reachable (WebSocket)"
 )
 
 for i in "${!checks[@]}"; do
@@ -99,7 +96,7 @@ echo -e "${YELLOW}Manual Step:${NC}"
 echo "1. Open: $LIVE_URL"
 echo "2. Press F12 to open developer tools"
 echo "3. Go to Console tab"
-echo "4. Look for Supabase initialization logs"
+echo "4. Look for API initialization logs and network calls to your API gateway"
 echo "5. Verify no red errors appear"
 echo ""
 
@@ -115,5 +112,5 @@ echo ""
 echo "📞 If issues found:"
 echo "  - Check GitHub Actions logs: https://github.com/$GITHUB_REPO/actions"
 echo "  - Check browser console (F12) for errors"
-echo "  - Check Supabase dashboard for database status"
+echo "  - Check your Postgres instance or API dashboard for database status"
 echo ""

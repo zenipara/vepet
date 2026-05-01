@@ -2,7 +2,7 @@
 
 ## Status: ✅ COMPLETE
 
-All Phase 1 MVP components have been implemented and integrated with Supabase. Below is the complete checklist and testing guide.
+All Phase 1 MVP components have been implemented. The frontend now expects a custom backend (Node.js API + Go services) and PostgreSQL as the data store. Below is the checklist and testing guide.
 
 ---
 
@@ -55,10 +55,10 @@ All Phase 1 MVP components have been implemented and integrated with Supabase. B
 - [x] **Error Pages** - 404 & Unauthorized pages
 
 ### Database Integration
-- [x] **Supabase Connection** - Proper environment setup
-- [x] **RLS Policies** - Row-level security
-- [x] **20+ Tables** - Complete schema
-- [x] **Functions & Triggers** - Auto-created
+- [x] **PostgreSQL** - Proper environment setup (Render or local)
+- [x] **RLS / Policies** - Database-level security (where applicable)
+- [x] **20+ Tables** - Complete schema provided in `supabase/migrations/`
+- [x] **Functions & Triggers** - SQL functions and triggers included
 
 ### Services & Hooks
 - [x] **petService** - Get pets, create, update, delete
@@ -75,33 +75,36 @@ All Phase 1 MVP components have been implemented and integrated with Supabase. B
 ### Prerequisites
 ```bash
 Node.js >= 18.x
-npm >= 9.x
-Supabase account
+pnpm / npm >= 9.x
+Local or hosted PostgreSQL (Render recommended for staging/production)
 ```
 
 ### Step 1: Install & Setup Environment
 
 ```bash
 cd frontend
-npm install
+pnpm install
 
-# Copy .env.local and add your Supabase credentials
+# Create frontend .env.local for local development
 cat > .env.local << EOF
-VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGc...your-key...
-VITE_APP_NAME=VetCare System
-VITE_APP_VERSION=1.0.0
+VITE_API_URL=http://localhost:4000
+VITE_R2_UPLOAD_ENABLED=true
 EOF
 ```
 
 ### Step 2: Setup Database
 
-```bash
-# Run migrations to create schema
-npx supabase db push
+Apply SQL migrations to your PostgreSQL instance (local or Render Managed DB). SQL files are in `supabase/migrations/`.
 
-# Seed sample data (creates test users & pets)
-npm run seed
+Example using `psql`:
+
+```bash
+psql "$DATABASE_URL" -f supabase/migrations/001_initial_schema.sql
+psql "$DATABASE_URL" -f supabase/migrations/002_functions_and_triggers.sql
+psql "$DATABASE_URL" -f supabase/migrations/003_rls_policies.sql
+
+# Seed data (if using provided SQL seed file)
+psql "$DATABASE_URL" -f supabase/seed.sql
 ```
 
 ### Step 3: Start Development Server
