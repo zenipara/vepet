@@ -37,68 +37,73 @@ import { CMSPage } from '@/pages/admin/CMSPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { UnauthorizedPage } from '@/pages/UnauthorizedPage'
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      element: <PublicLayout />,
+      children: [
+        { path: '/', element: <HomePage /> },
+        { path: '/emergency', element: <EmergencyPage /> },
+      ],
+    },
+    {
+      element: <AuthLayout />,
+      children: [
+        { path: '/login', element: <LoginPage /> },
+        { path: '/register', element: <RegisterPage /> },
+      ],
+    },
+    {
+      path: '/dashboard',
+      element: (
+        <RoleGuard allowedRoles={['customer']}>
+          <DashboardLayout />
+        </RoleGuard>
+      ),
+      children: [
+        { index: true, element: <DashboardPage /> },
+        { path: 'pets', element: <PetsPage /> },
+        { path: 'booking', element: <BookingPage /> },
+        { path: 'recovery/:caseId', element: <RecoveryPage /> },
+      ],
+    },
+    {
+      path: '/clinic',
+      element: (
+        <RoleGuard allowedRoles={['staff', 'doctor']}>
+          <ClinicLayout />
+        </RoleGuard>
+      ),
+      children: [
+        { index: true, element: <ClinicPage /> },
+        { path: 'appointments', element: <AppointmentsPage /> },
+        { path: 'patients', element: <PatientsPage /> },
+        { path: 'emr/:petId', element: <EMRPage /> },
+      ],
+    },
+    {
+      path: '/admin',
+      element: (
+        <RoleGuard allowedRoles={['admin']}>
+          <AdminLayout />
+        </RoleGuard>
+      ),
+      children: [
+        { index: true, element: <AdminPage /> },
+        { path: 'users', element: <UsersPage /> },
+        { path: 'cms', element: <CMSPage /> },
+      ],
+    },
+    {
+      path: '/unauthorized',
+      element: <UnauthorizedPage />,
+    },
+    {
+      path: '*',
+      element: <NotFoundPage />,
+    },
+  ],
   {
-    element: <PublicLayout />,
-    children: [
-      { path: '/', element: <HomePage /> },
-      { path: '/emergency', element: <EmergencyPage /> },
-    ],
+    basename: import.meta.env.BASE_URL,
   },
-  {
-    element: <AuthLayout />,
-    children: [
-      { path: '/login', element: <LoginPage /> },
-      { path: '/register', element: <RegisterPage /> },
-    ],
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <RoleGuard allowedRoles={['customer']}>
-        <DashboardLayout />
-      </RoleGuard>
-    ),
-    children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'pets', element: <PetsPage /> },
-      { path: 'booking', element: <BookingPage /> },
-      { path: 'recovery/:caseId', element: <RecoveryPage /> },
-    ],
-  },
-  {
-    path: '/clinic',
-    element: (
-      <RoleGuard allowedRoles={['staff', 'doctor']}>
-        <ClinicLayout />
-      </RoleGuard>
-    ),
-    children: [
-      { index: true, element: <ClinicPage /> },
-      { path: 'appointments', element: <AppointmentsPage /> },
-      { path: 'patients', element: <PatientsPage /> },
-      { path: 'emr/:petId', element: <EMRPage /> },
-    ],
-  },
-  {
-    path: '/admin',
-    element: (
-      <RoleGuard allowedRoles={['admin']}>
-        <AdminLayout />
-      </RoleGuard>
-    ),
-    children: [
-      { index: true, element: <AdminPage /> },
-      { path: 'users', element: <UsersPage /> },
-      { path: 'cms', element: <CMSPage /> },
-    ],
-  },
-  {
-    path: '/unauthorized',
-    element: <UnauthorizedPage />,
-  },
-  {
-    path: '*',
-    element: <NotFoundPage />,
-  },
-])
+)
