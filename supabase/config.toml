@@ -1,0 +1,9 @@
+# This is a placeholder Supabase config
+# For development, link your project with: supabase link --project-ref <PROJECT_REF>
+
+[build.functions.build_flags]
+external_node_modules = ["@supabase/supabase-js"]
+
+[[env.production.functions."*".policies]]
+name = "Authenticated users only"
+definition = "auth.role() == 'authenticated'"
