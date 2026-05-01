@@ -14,6 +14,12 @@ import {
   ShieldCheck,
   Stethoscope,
   Users,
+  Cat,
+  Dog,
+  Bird,
+  Rabbit,
+  Sparkles,
+  Heart,
 } from 'lucide-react'
 import { Accordion } from '@/components/ui/Accordion'
 
@@ -102,16 +108,25 @@ export const HomePage = () => {
       name: 'Dr. Rina',
       role: 'Kepala Klinik, Klinik Harapan Hewan',
       text: 'Integrasi rekam medis dan booking membuat alur kerja tim kami jauh lebih cepat.',
+      petType: 'dog',
+      petIcon: Dog,
+      emoji: '🐕‍🦺',
     },
     {
       name: 'Budi',
       role: 'Pemilik hewan peliharaan',
       text: 'Mudah mendaftar dan melihat riwayat kesehatan kucing saya dalam satu tempat.',
+      petType: 'cat',
+      petIcon: Cat,
+      emoji: '😺',
     },
     {
       name: 'Sari',
       role: 'Perawat klinik',
       text: 'Tampilan dashboardnya intuitif — memudahkan penjadwalan dan follow-up.',
+      petType: 'bird',
+      petIcon: Bird,
+      emoji: '🦜',
     },
   ]
 
@@ -142,36 +157,57 @@ export const HomePage = () => {
     },
   ]
 
-  // Decorative hero illustration (responsive)
-  const HeroIllustration = () => (
-    <svg
-      viewBox="0 0 600 400"
-      fill="none"
-      aria-hidden="true"
-      className="hidden lg:block h-64 w-full max-w-sm"
-    >
-      <rect x="0" y="0" width="600" height="400" rx="24" fill="url(#g)" />
-      <g transform="translate(80,60) scale(0.9)">
-        <circle cx="120" cy="80" r="48" fill="#10B981" opacity="0.12" />
-        <circle cx="220" cy="40" r="32" fill="#06B6D4" opacity="0.14" />
-        <path d="M40 220c30-40 80-58 130-40s80 64 120 72" stroke="#34D399" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
-        <g transform="translate(40,40)">
-          <circle cx="80" cy="120" r="40" fill="#fff" opacity="0.06" />
-          <path d="M70 105c0 0 6-12 25-12s25 12 25 12" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity="0.2" />
-          <g transform="translate(16,20)">
+  // Pet illustration with animated floating pets
+  const PetIllustration = () => (
+    <div className="relative h-64 w-full max-w-sm">
+      {/* Floating pet icons background */}
+      <div className="absolute -left-8 top-8 pet-float">
+        <Dog className="h-12 w-12 text-emerald-400 opacity-80" />
+      </div>
+      <div className="absolute right-0 top-0 pet-float-slow">
+        <Cat className="h-16 w-16 text-teal-400 opacity-70" />
+      </div>
+      <div className="absolute bottom-8 left-12 pet-bob">
+        <Rabbit className="h-10 w-10 text-emerald-300 opacity-75" />
+      </div>
+      <div className="absolute right-8 bottom-12 pet-bounce">
+        <Bird className="h-12 w-12 text-cyan-300 opacity-70" />
+      </div>
+
+      {/* Main SVG illustration */}
+      <svg
+        viewBox="0 0 600 400"
+        fill="none"
+        aria-hidden="true"
+        className="h-full w-full"
+      >
+        <defs>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0%" stopColor="#6EE7B7" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#67E8F9" stopOpacity="0.08" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="600" height="400" rx="24" fill="url(#g)" />
+        <g transform="translate(80,60) scale(0.9)">
+          <circle cx="120" cy="80" r="48" fill="#10B981" opacity="0.12" />
+          <circle cx="220" cy="40" r="32" fill="#06B6D4" opacity="0.14" />
+          <path d="M40 220c30-40 80-58 130-40s80 64 120 72" stroke="#34D399" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" />
+          {/* Happy dog face */}
+          <g transform="translate(40,40)">
+            <circle cx="80" cy="120" r="40" fill="#fff" opacity="0.1" />
+            <path d="M70 105c0 0 6-12 25-12s25 12 25 12" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity="0.3" />
             <circle cx="32" cy="32" r="8" fill="#34D399" />
             <circle cx="56" cy="32" r="8" fill="#34D399" />
             <circle cx="44" cy="48" r="8" fill="#34D399" />
           </g>
         </g>
-      </g>
-      <defs>
-        <linearGradient id="g" x1="0" x2="1">
-          <stop offset="0%" stopColor="#6EE7B7" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#67E8F9" stopOpacity="0.06" />
-        </linearGradient>
-      </defs>
-    </svg>
+      </svg>
+
+      {/* Sparkle elements */}
+      <div className="absolute top-1/4 left-1/4 pet-shimmer">
+        <Sparkles className="h-6 w-6 text-emerald-300 opacity-60" />
+      </div>
+    </div>
   )
 
   return (
@@ -236,8 +272,9 @@ export const HomePage = () => {
           </div>
 
           <div className="relative flex flex-col items-center gap-6">
-            <HeroIllustration />
-            <div className="absolute -inset-4 rounded-[2rem] bg-emerald-400/10 blur-2xl" />
+            <div className="hidden lg:block">
+              <PetIllustration />
+            </div>
             <Card className="relative overflow-hidden border-white/10 bg-slate-950/70 p-0 text-white shadow-2xl backdrop-blur-sm w-full max-w-md">
               <div className="border-b border-white/10 bg-white/5 px-6 py-5">
                 <div className="flex items-center gap-3">
@@ -283,6 +320,50 @@ export const HomePage = () => {
         </div>
       </section>
 
+      {/* Pet Types Showcase */}
+      <section className="public-reveal public-section public-divider bg-gradient-to-b from-emerald-50 to-transparent">
+        <div className="mb-10 text-center">
+          <Badge variant="info" className="mx-auto">Jenis Hewan</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Mendukung semua jenis hewan peliharaan</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-slate-600">VetCare dirancang untuk klinik yang melayani berbagai jenis hewan peliharaan</p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 animating-pets">
+          {[
+            { icon: Dog, name: 'Anjing (Dog)', color: 'from-amber-100 to-amber-50', iconColor: 'text-amber-600' },
+            { icon: Cat, name: 'Kucing (Cat)', color: 'from-orange-100 to-orange-50', iconColor: 'text-orange-600' },
+            { icon: Rabbit, name: 'Kelinci (Rabbit)', color: 'from-pink-100 to-pink-50', iconColor: 'text-pink-600' },
+            { icon: Bird, name: 'Burung (Bird)', color: 'from-cyan-100 to-cyan-50', iconColor: 'text-cyan-600' },
+          ].map(({ icon: Icon, name, color, iconColor }) => (
+            <Card key={name} className={`group relative border-0 bg-gradient-to-br ${color} overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-2 cursor-pointer`}>
+              <div className="flex flex-col items-center justify-center space-y-4 p-8 text-center h-full min-h-40">
+                {/* Animated pet icon */}
+                <div className="relative">
+                  <div className={`p-4 rounded-2xl bg-white/60 group-hover:bg-white transition-colors ${iconColor}`}>
+                    <Icon className="h-10 w-10 pet-bounce group-hover:pet-bounce" />
+                  </div>
+                  {/* Sparkle on hover */}
+                  <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Sparkles className="h-5 w-5 text-emerald-500" />
+                  </div>
+                </div>
+
+                {/* Pet name */}
+                <div>
+                  <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">{name}</h3>
+                  <p className="text-sm text-slate-600 mt-1">Dukungan penuh untuk perawatan kesehatan</p>
+                </div>
+
+                {/* Hover indicator */}
+                <div className="transform translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+                  <Badge variant="success" className="bg-emerald-500 text-white border-0">Didukung ✓</Badge>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+
       <section className="public-reveal public-section public-divider">
         <div className="mb-8">
           <Badge variant="info">Suara Pengguna</Badge>
@@ -291,22 +372,39 @@ export const HomePage = () => {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-3">
-          {testimonials.map((t) => (
-            <Card key={t.name} className="public-surface-card h-full border-slate-200 hover:shadow-lg hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-emerald-200">
-              <div className="space-y-3 p-4">
-                <p className="leading-7 text-slate-700">“{t.text}”</p>
-                <div className="mt-2 flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-semibold">{t.name}</div>
+          {testimonials.map((t) => {
+            const PetIcon = t.petIcon
+            return (
+              <Card key={t.name} className="public-surface-card h-full border-slate-200 hover:shadow-lg hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-emerald-200 overflow-hidden group">
+                <div className="space-y-4 p-5">
+                  {/* Pet avatar */}
+                  <div className="flex items-center justify-between">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 px-3 py-1">
+                      <PetIcon className="h-4 w-4 text-emerald-600 pet-bounce" />
+                      <span className="text-xs font-semibold text-emerald-700 capitalize">{t.petType}</span>
+                    </div>
+                    <span className="text-2xl group-hover:scale-125 transition-transform">{t.emoji}</span>
+                  </div>
+
+                  {/* Rating stars */}
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Heart key={i} className="h-3.5 w-3.5 fill-red-400 text-red-400 group-hover:animate-pulse" />
+                    ))}
+                  </div>
+
+                  {/* Testimonial text */}
+                  <p className="leading-6 text-slate-700 text-sm">"{t.text}"</p>
+
+                  {/* Name & role */}
+                  <div className="border-t border-slate-200 pt-3">
+                    <div className="text-sm font-semibold text-slate-900">{t.name}</div>
                     <div className="text-xs text-slate-500">{t.role}</div>
                   </div>
-                  <div className="text-emerald-600" aria-hidden>
-                    ★★★★★
-                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            )
+          })}
         </div>
       </section>
 
@@ -351,17 +449,30 @@ export const HomePage = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {features.map((feature) => {
+          {features.map((feature, idx) => {
             const Icon = feature.icon
 
             return (
-              <Card key={feature.title} className="h-full border-slate-200 bg-white transition-transform duration-200 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200">
-                <div className="space-y-4">
-                  <div className="inline-flex rounded-2xl bg-emerald-50 p-3 text-emerald-700">
-                    <Icon className="h-6 w-6" />
+              <Card 
+                key={feature.title} 
+                className="group h-full border-slate-100 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 overflow-hidden"
+                style={{ transitionDelay: `${idx * 50}ms` }}
+              >
+                <div className="space-y-4 p-6 relative overflow-hidden">
+                  {/* Animated background gradient on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                  
+                  {/* Icon with animation */}
+                  <div className="inline-flex rounded-2xl bg-emerald-50 p-3 text-emerald-700 group-hover:bg-emerald-100 group-hover:text-emerald-800 transition-colors">
+                    <Icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
                   </div>
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="leading-7 text-slate-700">{feature.desc}</p>
+
+                  {/* Title and description */}
+                  <h3 className="text-xl font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">{feature.title}</h3>
+                  <p className="leading-7 text-slate-600 group-hover:text-slate-700 transition-colors">{feature.desc}</p>
+
+                  {/* Floating accent */}
+                  <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-100 rounded-full opacity-0 group-hover:opacity-20 transition-opacity" />
                 </div>
               </Card>
             )

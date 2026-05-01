@@ -200,3 +200,62 @@ body {
 ::-webkit-scrollbar-thumb {
   @apply bg-gray-300 rounded hover:bg-gray-400;
 }
+
+/* Pet & creature animations */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes bounce-pet {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-24px); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(4px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+@keyframes wiggle-tail {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.pet-float { animation: float-gentle 3s ease-in-out infinite; }
+.pet-float-slow { animation: float-slow 4s ease-in-out infinite; }
+.pet-bounce { animation: bounce-pet 2s ease-in-out infinite; }
+.pet-bob { animation: bob 2s ease-in-out infinite; }
+.pet-sway { animation: sway 3s ease-in-out infinite; }
+.pet-wiggle-tail { animation: wiggle-tail 0.6s ease-in-out infinite; }
+.pet-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.pet-shimmer { animation: shimmer 2s ease-in-out infinite; }
+
+/* Animation delay variations for stagger effect */
+.animating-pets > :nth-child(1) { animation-delay: 0s; }
+.animating-pets > :nth-child(2) { animation-delay: 0.1s; }
+.animating-pets > :nth-child(3) { animation-delay: 0.2s; }
+.animating-pets > :nth-child(4) { animation-delay: 0.3s; }
+.animating-pets > :nth-child(5) { animation-delay: 0.4s; }
+.animating-pets > :nth-child(6) { animation-delay: 0.5s; }
