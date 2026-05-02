@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}"
 echo "╔════════════════════════════════════════════════╗"
 echo "║     VetCare Database Setup Script              ║"
-echo "║     Standalone PostgreSQL Setup                ║"
+echo "║     Local PostgreSQL Setup                     ║"
 echo "╚════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
@@ -51,12 +51,12 @@ fi
 
 echo ""
 echo -e "${BLUE}Step 1: Applying schema migration...${NC}"
-psql $DATABASE_URL -f database/migrations/001_initial_schema_standalone.sql
+psql $DATABASE_URL -f database/migrations/001_initial_schema_local.sql
 echo -e "${GREEN}✓ Schema created successfully${NC}"
 
 echo ""
 echo -e "${BLUE}Step 2: Seeding test data...${NC}"
-psql $DATABASE_URL -f database/seed_standalone.sql
+psql $DATABASE_URL -f database/seed_local.sql
 echo -e "${GREEN}✓ Test data inserted successfully${NC}"
 
 echo ""
@@ -101,5 +101,5 @@ fi
 echo -e "${BLUE}More information:${NC}"
 echo "  Setup Guide: database/DATABASE_SETUP_GUIDE.md"
 echo "  Migrations:  database/migrations/"
-echo "  Seed Data:   database/seed_standalone.sql"
+echo "  Seed Data:   database/seed_local.sql"
 echo ""

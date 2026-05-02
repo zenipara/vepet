@@ -1,13 +1,13 @@
 # VetCare Database Setup Guide
 
 **Last Updated**: May 2, 2026  
-**Status**: Standalone PostgreSQL (No Supabase dependency)
+**Status**: Local PostgreSQL (No Supabase dependency)
 
 ---
 
 ## 📋 Overview
 
-VetCare now uses a standalone PostgreSQL database (no longer Supabase-dependent). This guide covers:
+VetCare now uses a local PostgreSQL database (no longer Supabase-dependent). This guide covers:
 1. **Local Setup** - PostgreSQL on your machine for development
 2. **Cloud Setup** - Render.com managed PostgreSQL for production
 3. **Running Migrations** - Schema, data, and seed setup
@@ -79,8 +79,8 @@ psql $DATABASE_URL -c "SELECT version();"
 ### Step 2: Apply Schema Migration
 
 ```bash
-# Run the new standalone schema
-psql $DATABASE_URL -f database/migrations/001_initial_schema_standalone.sql
+# Run the local schema
+psql $DATABASE_URL -f database/migrations/001_initial_schema_local.sql
 
 # Verify tables were created
 psql $DATABASE_URL -c "\dt"
@@ -117,7 +117,7 @@ psql $DATABASE_URL -c "\dt"
 
 ```bash
 # Insert sample data
-psql $DATABASE_URL -f database/seed_standalone.sql
+psql $DATABASE_URL -f database/seed_local.sql
 
 # Verify data was inserted
 psql $DATABASE_URL -c "SELECT count(*) FROM users; SELECT count(*) FROM pets; SELECT count(*) FROM services;"
@@ -174,10 +174,10 @@ psql $DATABASE_URL -c "SELECT version();"
 
 ```bash
 # Run migrations against Render database
-psql $DATABASE_URL -f database/migrations/001_initial_schema_standalone.sql
+psql $DATABASE_URL -f database/migrations/001_initial_schema_local.sql
 
 # Seed data
-psql $DATABASE_URL -f database/seed_standalone.sql
+psql $DATABASE_URL -f database/seed_local.sql
 
 # Verify
 psql $DATABASE_URL -c "SELECT count(*) FROM users;"
@@ -353,7 +353,7 @@ psql $DATABASE_URL -c "
   CREATE SCHEMA public;
 "
 # Then re-run migration
-psql $DATABASE_URL -f database/migrations/001_initial_schema_standalone.sql
+psql $DATABASE_URL -f database/migrations/001_initial_schema_local.sql
 ```
 
 ### Version Issues
@@ -433,8 +433,8 @@ When adding new tables/changes:
 
 2. **Apply Migrations:**
    ```bash
-   psql $DATABASE_URL -f database/migrations/001_initial_schema_standalone.sql
-   psql $DATABASE_URL -f database/seed_standalone.sql
+   psql $DATABASE_URL -f database/migrations/001_initial_schema_local.sql
+   psql $DATABASE_URL -f database/seed_local.sql
    ```
 
 3. **Update Backend:**
@@ -454,7 +454,7 @@ When adding new tables/changes:
 
 For database issues:
 1. Check migration files in `database/migrations/`
-2. Review seed data in `database/seed_standalone.sql`
+2. Review seed data in `database/seed_local.sql`
 3. Test connection with psql
 4. Check backend logs for database errors
 

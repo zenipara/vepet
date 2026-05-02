@@ -308,7 +308,7 @@ docker ps | grep postgres
 psql postgresql://postgres:postgres@localhost:5432/vetcare -c "\dt"
 
 # Reseed if needed
-psql postgresql://postgres:postgres@localhost:5432/vetcare < database/seed_standalone.sql
+psql postgresql://postgres:postgres@localhost:5432/vetcare < database/seed_local.sql
 ```
 
 ---
