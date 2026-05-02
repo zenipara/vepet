@@ -110,6 +110,22 @@ export const supabase = {
   from(table: string) {
     return new Query(table)
   },
+  // Minimal rpc shim: return synchronous default for small helper functions
+  rpc(name: string, _params?: any) {
+    // Common helper used by frontend: min_stock
+    if (name === 'min_stock') {
+      // Default threshold used for low stock checks
+      return 10
+    }
+    // Fallback: attempt to call backend RPC endpoint (async) - return Promise
+    return fetch(`${API_URL.replace(/\/$/, '')}/rpc/${encodeURIComponent(name)}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(_params || {}),
+    })
+      .then((r) => r.json())
+      .catch(() => null)
+  },
 }
 
 // Lightweight auth proxy to backend auth endpoints so frontend code using

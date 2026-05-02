@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import crudRoutes from './routes/crud.js';
 import uploadRoutes from './routes/upload.js';
+import rpcRoutes from './routes/rpc.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get('/health', (_, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api', crudRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/rpc', rpcRoutes);
 
 // 404 handler
 app.use((_, res: Response) => {
