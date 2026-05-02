@@ -77,6 +77,14 @@ Auto-generated endpoints for tables:
 - `/api/appointments` - Appointment management
 - `/api/medical_records` - EMR records
 
+Additional CRUD endpoints available (added):
+- `/api/products` - Inventory products
+- `/api/batches` - Product batches
+- `/api/stock_movements` - Stock movement records
+- `/api/notifications` - User notifications
+- `/api/profiles` - User profiles
+- `/api/vendors` - Supplier records
+
 Operations:
 - `GET /api/[table]` - List all
 - `GET /api/[table]/:id` - Get by ID
@@ -196,6 +204,14 @@ backend/
 - [ ] Add API documentation (Swagger/OpenAPI)
 - [ ] Add logging & monitoring
 - [ ] Add database transaction support
+
+## RPC Endpoints
+
+The API exposes a simple RPC endpoint under `/api/rpc/:name` for small helper functions. Currently supported:
+
+- `POST /api/rpc/min_stock` — returns the configured minimum stock threshold (defaults to `10`), useful for inventory checks.
+
+Note: Generic SQL function execution is implemented but should be used with caution; validate inputs and restrict callable functions in production.
 
 ## Contributing
 
