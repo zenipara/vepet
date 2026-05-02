@@ -1,6 +1,6 @@
 export const notificationService = {
   async getNotifications() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('notifications')
       .select('*')
@@ -12,7 +12,7 @@ export const notificationService = {
   },
 
   async markAsRead(notificationId: string): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('notifications')
       .update({ read: true })
@@ -22,7 +22,7 @@ export const notificationService = {
   },
 
   async markAllAsRead(): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('notifications')
       .update({ read: true })
@@ -32,7 +32,7 @@ export const notificationService = {
   },
 
   async deleteNotification(notificationId: string): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('notifications')
       .delete()

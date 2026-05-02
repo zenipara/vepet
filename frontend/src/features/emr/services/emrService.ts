@@ -16,7 +16,7 @@ export interface MedicalRecordWithDetails {
 
 export const emrService = {
   async getPetMedicalHistory(petId: string): Promise<MedicalRecordWithDetails[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('medical_records')
       .select(`
@@ -43,8 +43,8 @@ export const emrService = {
     notes?: string
     follow_up_date?: string
   }): Promise<MedicalRecordWithDetails> {
-    const { supabase } = await import('@/lib/supabaseClient')
-    const { data: user } = await supabase.auth.getUser()
+    const { api } = await import('@/lib/apiClient')
+    const { data: user } = await api.auth.getUser()
 
     const { data, error } = await supabase
       .from('medical_records')
@@ -68,7 +68,7 @@ export const emrService = {
     product_id?: string
     batch_id?: string
   }): Promise<Treatment> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('treatments')
       .insert(payload)
@@ -99,7 +99,7 @@ export const emrService = {
     product_id?: string
     batch_id?: string
   }): Promise<Prescription> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('prescriptions')
       .insert(payload)

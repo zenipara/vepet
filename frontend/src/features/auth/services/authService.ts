@@ -1,10 +1,10 @@
-import { supabase } from '@/lib/supabaseClient'
+import { api } from '@/lib/apiClient'
 import type { UserRole } from '@/types/roles'
 
 export const authService = {
   async signIn(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await api.auth.signInWithPassword({
         email,
         password,
       })
@@ -23,7 +23,7 @@ export const authService = {
   },
 
   async signInWithMagicLink(email: string, redirectTo?: string) {
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await api.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: redirectTo,
@@ -35,7 +35,7 @@ export const authService = {
   },
 
   async signUp(email: string, password: string, userData: Record<string, any>) {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await api.auth.signUp({
       email,
       password,
       options: {
@@ -47,13 +47,13 @@ export const authService = {
   },
 
   async signOut() {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await api.auth.signOut()
     if (error) throw error
   },
 
   async getUserRole(userId: string): Promise<UserRole> {
     // Get user to access user_metadata.role from JWT token
-    const { data, error } = await supabase.auth.getUser()
+    const { data, error } = await api.auth.getUser()
     
     if (error) {
       console.error('Failed to get user:', error)
@@ -66,12 +66,12 @@ export const authService = {
   },
 
   async getSession() {
-    const { data } = await supabase.auth.getSession()
+    const { data } = await api.auth.getSession()
     return data.session
   },
 
   async getCurrentUser() {
-    const { data } = await supabase.auth.getUser()
+    const { data } = await api.auth.getUser()
     return data.user
   },
 }

@@ -17,7 +17,7 @@ export interface UpdatePetDTO extends Partial<CreatePetDTO> {
 
 export const petService = {
   async getMyPets(): Promise<Pet[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('pets')
       .select('*')
@@ -29,8 +29,8 @@ export const petService = {
   },
 
   async getPetById(petId: string): Promise<Pet | null> {
-    const { supabase } = await import('@/lib/supabaseClient')
-    const { data, error } = await supabase
+    const { api } = await import('@/lib/apiClient')
+    const { data, error } = await api
       .from('pets')
       .select('*')
       .eq('id', petId)
@@ -41,7 +41,7 @@ export const petService = {
   },
 
   async createPet(payload: CreatePetDTO): Promise<Pet> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('pets')
       .insert(payload)
@@ -53,7 +53,7 @@ export const petService = {
   },
 
   async updatePet(petId: string, payload: Partial<CreatePetDTO>): Promise<Pet> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('pets')
       .update(payload)
@@ -66,7 +66,7 @@ export const petService = {
   },
 
   async deletePet(petId: string): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('pets')
       .update({ is_active: false })

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabaseClient'
+import { api } from '@/lib/apiClient'
 import { useAuthStore } from '@/store/authStore'
 import { authService } from '../services/authService'
 
@@ -37,7 +37,7 @@ export const useAuth = () => {
     checkAuth()
 
     // Listen to auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = api.auth.onAuthStateChange(
       async (event, session) => {
         console.debug('useAuth.onAuthStateChange', { event, session })
         if (event === 'SIGNED_IN' && session) {

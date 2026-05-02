@@ -1,6 +1,6 @@
 export const cmsService = {
   async getClinicProfile() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('clinic_profile')
       .select('*')
@@ -11,7 +11,7 @@ export const cmsService = {
   },
 
   async updateClinicProfile(payload: Record<string, any>): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('clinic_profile')
       .update({ ...payload, updated_at: new Date().toISOString() })
@@ -21,7 +21,7 @@ export const cmsService = {
   },
 
   async getPublicPages() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('public_pages')
       .select('*')
@@ -32,7 +32,7 @@ export const cmsService = {
   },
 
   async updatePage(slug: string, payload: Record<string, any>): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('public_pages')
       .update({ ...payload, updated_at: new Date().toISOString() })
@@ -42,7 +42,7 @@ export const cmsService = {
   },
 
   async getFeatureFlags() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('feature_flags')
       .select('*')
@@ -52,7 +52,7 @@ export const cmsService = {
   },
 
   async toggleFeatureFlag(key: string, enabled: boolean): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('feature_flags')
       .update({ is_enabled: enabled, updated_at: new Date().toISOString() })
@@ -63,7 +63,7 @@ export const cmsService = {
 
   // Blog posts
   async getBlogPosts() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -74,7 +74,7 @@ export const cmsService = {
   },
 
   async createBlogPost(payload: { title: string; content: string; category?: string; status?: string; author_id?: string }) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('blog_posts')
       .insert({ ...payload, published_at: payload.status === 'published' ? new Date().toISOString() : null })
@@ -86,7 +86,7 @@ export const cmsService = {
   },
 
   async updateBlogPost(id: string, payload: Record<string, any>) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('blog_posts')
       .update({ ...payload, updated_at: new Date().toISOString() })
@@ -96,7 +96,7 @@ export const cmsService = {
   },
 
   async deleteBlogPost(id: string) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('blog_posts')
       .delete()
@@ -107,7 +107,7 @@ export const cmsService = {
 
   // Testimonials
   async getTestimonials() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('testimonials')
       .select('*')
@@ -118,7 +118,7 @@ export const cmsService = {
   },
 
   async createTestimonial(payload: { person_name: string; pet_name: string; content: string; rating: number; status?: string }) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('testimonials')
       .insert({ ...payload })
@@ -130,7 +130,7 @@ export const cmsService = {
   },
 
   async updateTestimonial(id: string, payload: Record<string, any>) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('testimonials')
       .update({ ...payload, updated_at: new Date().toISOString() })

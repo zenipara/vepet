@@ -2,7 +2,7 @@ import type { InpatientCase, CaseUpdate, CasePhoto } from '@/types/medical'
 
 export const inpatientService = {
   async getActiveCases(): Promise<InpatientCase[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('inpatient_cases')
       .select(`
@@ -18,7 +18,7 @@ export const inpatientService = {
   },
 
   async getCaseDetails(caseId: string) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('inpatient_cases')
       .select(`
@@ -41,8 +41,8 @@ export const inpatientService = {
     description: string
     vitals?: Record<string, any>
   }): Promise<CaseUpdate> {
-    const { supabase } = await import('@/lib/supabaseClient')
-    const { data: user } = await supabase.auth.getUser()
+    const { api } = await import('@/lib/apiClient')
+    const { data: user } = await api.auth.getUser()
 
     const { data, error } = await supabase
       .from('case_updates')
@@ -63,13 +63,13 @@ export const inpatientService = {
     file: File,
     caption: string
   ): Promise<CasePhoto> {
-    const { supabase } = await import('@/lib/supabaseClient')
-    const { data: user } = await supabase.auth.getUser()
+    const { api } = await import('@/lib/apiClient')
+    const { data: user } = await api.auth.getUser()
 
     const fileName = `${caseId}/${Date.now()}_${file.name}`
 
     // Upload file
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await api.storage
       .from('case-photos')
       .upload(fileName, file)
 
@@ -97,7 +97,7 @@ export const inpatientService = {
   },
 
   async updateCaseStatus(caseId: string, status: string): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('inpatient_cases')
       .update({ status })
@@ -107,7 +107,7 @@ export const inpatientService = {
   },
 
   async dischargePet(caseId: string): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('inpatient_cases')
       .update({

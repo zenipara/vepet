@@ -18,7 +18,7 @@ export const useNotifications = (): UseNotificationsReturn => {
     let channel: any = null
 
     const setupRealtime = async () => {
-      const { supabase } = await import('@/lib/supabaseClient')
+      const { api } = await import('@/lib/apiClient')
 
       channel = supabase
         .channel('public:notifications')

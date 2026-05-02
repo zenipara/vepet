@@ -20,7 +20,7 @@ export interface AvailableSlot {
 
 export const bookingService = {
   async getMyBookings(): Promise<Appointment[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('appointments')
       .select(
@@ -37,7 +37,7 @@ export const bookingService = {
   },
 
   async getAvailableSlots(doctorId: string, date: string): Promise<AvailableSlot[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const startOfDay = `${date}T00:00:00+00:00`
     const endOfDay = `${date}T23:59:59+00:00`
 
@@ -79,7 +79,7 @@ export const bookingService = {
   },
 
   async createBooking(payload: CreateBookingDTO): Promise<Appointment> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('appointments')
       .insert(payload)
@@ -91,7 +91,7 @@ export const bookingService = {
   },
 
   async updateStatus(bookingId: string, status: string): Promise<Appointment> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('appointments')
       .update({ status })
@@ -104,7 +104,7 @@ export const bookingService = {
   },
 
   async getServices() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('services')
       .select('*')
@@ -116,7 +116,7 @@ export const bookingService = {
   },
 
   async getDoctors() {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('doctors')
       .select('id, profiles(full_name, avatar_url), specialization')

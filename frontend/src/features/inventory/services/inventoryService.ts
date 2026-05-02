@@ -2,7 +2,7 @@ import type { Product } from '@/types/inventory'
 
 export const inventoryService = {
   async getProducts(): Promise<Product[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -14,7 +14,7 @@ export const inventoryService = {
   },
 
   async getProductsByCategory(category: string): Promise<Product[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -27,7 +27,7 @@ export const inventoryService = {
   },
 
   async getLowStockProducts(): Promise<Product[]> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -39,7 +39,7 @@ export const inventoryService = {
   },
 
   async updateStock(productId: string, newQuantity: number): Promise<void> {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { error } = await supabase
       .from('products')
       .update({ stock_qty: newQuantity, updated_at: new Date().toISOString() })
@@ -49,7 +49,7 @@ export const inventoryService = {
   },
 
   async getBatches(productId: string) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('batches')
       .select('*')
@@ -61,7 +61,7 @@ export const inventoryService = {
   },
 
   async getExpiringBatches(days = 30) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const futureDate = new Date()
     futureDate.setDate(futureDate.getDate() + days)
 
@@ -77,7 +77,7 @@ export const inventoryService = {
   },
 
   async getStockMovements(productId: string) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('stock_movements')
       .select('*')
@@ -89,7 +89,7 @@ export const inventoryService = {
   },
 
   async createBatch(productId: string, payload: { batch_number: string; quantity: number; expiry_date: string; received_date?: string }) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('batches')
       .insert({ product_id: productId, ...payload })
@@ -109,7 +109,7 @@ export const inventoryService = {
     reference_type?: string
     notes?: string
   }) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
     const { data, error } = await supabase
       .from('stock_movements')
       .insert(payload)
@@ -122,7 +122,7 @@ export const inventoryService = {
 
   // Consume quantity from a batch and update product stock atomically (best-effort)
   async consumeFromBatch(productId: string, batchId: string | undefined, quantity: number, reference?: { id?: string; type?: string }) {
-    const { supabase } = await import('@/lib/supabaseClient')
+    const { api } = await import('@/lib/apiClient')
 
     // Decrease batch quantity if batch provided
     if (batchId) {

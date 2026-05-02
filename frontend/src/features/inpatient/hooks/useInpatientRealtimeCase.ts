@@ -28,7 +28,7 @@ export const useInpatientRealtimeCase = (caseId: string): UseInpatientRealtimeCa
       setError(null)
 
       try {
-        const { supabase } = await import('@/lib/supabaseClient')
+        const { api } = await import('@/lib/apiClient')
 
         // Initial fetch
         const caseData = await inpatientService.getCaseDetails(caseId)

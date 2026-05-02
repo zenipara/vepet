@@ -1,6 +1,6 @@
-// Supabase removed. Lightweight shim that proxies basic table operations
-// to a custom API gateway. This is an interim compatibility layer
-// that exposes `supabase.from(table)...` chain used by the frontend services.
+// API Client - Lightweight shim that proxies table operations
+// to custom backend API gateway. Replaces Supabase client.
+// Exposes `api.from(table)...` chain used by the frontend services.
 
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -111,7 +111,7 @@ class Query {
   }
 }
 
-export const supabase = {
+export const api = {
   from(table: string) {
     return new Query(table)
   },
