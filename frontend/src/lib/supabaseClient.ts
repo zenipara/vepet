@@ -111,3 +111,68 @@ export const supabase = {
     return new Query(table)
   },
 }
+
+// Lightweight auth proxy to backend auth endpoints so frontend code using
+// `supabase.auth.*` continues to work with the custom API gateway.
+export const auth = {
+  async signInWithPassword({ email, password }: { email: string; password: string }) {
+    try {
+      const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/sign-in`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) return { data: null, error: data || { message: res.statusText } }
+      return { data, error: null }
+    } catch (err: any) {
+      return { data: null, error: { message: err.message } }
+    }
+  },
+
+  async signUp({ email, password, options }: any) {
+    try {
+      const body: any = { email, password }
+      if (options?.data) body.userData = options.data
+      const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/sign-up`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) return { data: null, error: data || { message: res.statusText } }
+      return { data, error: null }
+    } catch (err: any) {
+      return { data: null, error: { message: err.message } }
+    }
+  },
+
+  async signInWithOtp(_opts: any) {
+    // Magic link / OTP not implemented on backend; return a not-implemented error
+    return { data: null, error: { message: 'OTP sign-in not supported by API gateway' } }
+  },
+
+  async signOut() {
+    // Frontend should remove tokens locally; backend has no sign-out endpoint
+    return { data: null, error: null }
+  },
+
+  async getUser() {
+    try {
+      const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/me`, { method: 'GET' })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) return { data: null, error: data || { message: res.statusText } }
+      return { data, error: null }
+    } catch (err: any) {
+      return { data: null, error: { message: err.message } }
+    }
+  },
+
+  async getSession() {
+    // Session handling is left to the app (tokens); return null for compatibility
+    return { data: { session: null } }
+  },
+}
+
+// Keep default export for compatibility
+export default { supabase, auth }

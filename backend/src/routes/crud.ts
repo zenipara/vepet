@@ -11,6 +11,12 @@ const tableRoutes = [
   { path: 'appointments', tableName: 'appointments' },
   { path: 'bookings', tableName: 'appointments' },
   { path: 'medical_records', tableName: 'medical_records' },
+  { path: 'products', tableName: 'products' },
+  { path: 'batches', tableName: 'batches' },
+  { path: 'stock_movements', tableName: 'stock_movements' },
+  { path: 'notifications', tableName: 'notifications' },
+  { path: 'profiles', tableName: 'profiles' },
+  { path: 'vendors', tableName: 'vendors' },
 ] as const;
 
 for (const { path, tableName } of tableRoutes) {
