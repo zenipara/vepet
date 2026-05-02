@@ -4,16 +4,21 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = Router();
 
-// Generic CRUD routes for common tables
-const tables = ['pets', 'bookings', 'services', 'doctors', 'appointments', 'medical_records'];
+const tableRoutes = [
+  { path: 'pets', tableName: 'pets' },
+  { path: 'services', tableName: 'services' },
+  { path: 'doctors', tableName: 'doctors' },
+  { path: 'appointments', tableName: 'appointments' },
+  { path: 'bookings', tableName: 'appointments' },
+  { path: 'medical_records', tableName: 'medical_records' },
+] as const;
 
-for (const table of tables) {
-  // Protected routes - require authentication
-  router.get(`/${table}`, authMiddleware, await getAll(table));
-  router.get(`/${table}/:id`, authMiddleware, await getById(table));
-  router.post(`/${table}`, authMiddleware, await create(table));
-  router.put(`/${table}/:id`, authMiddleware, await update(table));
-  router.delete(`/${table}/:id`, authMiddleware, await delete_(table));
+for (const { path, tableName } of tableRoutes) {
+  router.get(`/${path}`, authMiddleware, getAll(tableName));
+  router.get(`/${path}/:id`, authMiddleware, getById(tableName));
+  router.post(`/${path}`, authMiddleware, create(tableName));
+  router.put(`/${path}/:id`, authMiddleware, update(tableName));
+  router.delete(`/${path}/:id`, authMiddleware, delete_(tableName));
 }
 
 export default router;

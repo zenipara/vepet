@@ -4,10 +4,10 @@ import { AuthRequest } from '../middleware/auth.js';
 
 /**
  * Generic CRUD controller for simple table operations
- * Usage: Map routes like /api/pets, /api/bookings to this controller
+ * Usage: Map routes like /api/pets, /api/appointments to this controller
  */
 
-export async function getAll(tableName: string) {
+export function getAll(tableName: string) {
   return async (req: AuthRequest, res: Response) => {
     try {
       const result = await query(`SELECT * FROM ${tableName} LIMIT 100`);
@@ -19,7 +19,7 @@ export async function getAll(tableName: string) {
   };
 }
 
-export async function getById(tableName: string) {
+export function getById(tableName: string) {
   return async (req: AuthRequest, res: Response) => {
     try {
       const { id } = req.params;
@@ -37,7 +37,7 @@ export async function getById(tableName: string) {
   };
 }
 
-export async function create(tableName: string) {
+export function create(tableName: string) {
   return async (req: AuthRequest, res: Response) => {
     try {
       const data = req.body;
@@ -60,7 +60,7 @@ export async function create(tableName: string) {
   };
 }
 
-export async function update(tableName: string) {
+export function update(tableName: string) {
   return async (req: AuthRequest, res: Response) => {
     try {
       const { id } = req.params;
@@ -88,7 +88,7 @@ export async function update(tableName: string) {
   };
 }
 
-export async function delete_(tableName: string) {
+export function delete_(tableName: string) {
   return async (req: AuthRequest, res: Response) => {
     try {
       const { id } = req.params;
