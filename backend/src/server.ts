@@ -1,4 +1,5 @@
 import express, { Express, Response } from 'express';
+import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
@@ -15,6 +16,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 // Middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(cors({ origin: CORS_ORIGIN.split(',') }));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Health check
 app.get('/health', (_, res: Response) => {

@@ -4,6 +4,17 @@
 
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
+function buildAuthHeaders() {
+  const headers: Record<string, string> = {}
+
+  if (typeof window !== 'undefined') {
+    const token = window.localStorage?.getItem('vetcare_token') || window.sessionStorage?.getItem('vetcare_token')
+    if (token) headers.Authorization = `Bearer ${token}`
+  }
+
+  return headers
+}
+
 class Query {
   table: string
   selectFields: string | null = null
@@ -131,6 +142,59 @@ export const api = {
       .then((r) => r.json())
       .catch(() => null)
   },
+  storage: {
+    from(bucket: string) {
+      return {
+        async upload(filePath: string, file: File | Blob) {
+          try {
+            const buffer = await file.arrayBuffer()
+            const bytes = new Uint8Array(buffer)
+            let binary = ''
+
+            for (let index = 0; index < bytes.length; index += 1) {
+              binary += String.fromCharCode(bytes[index])
+            }
+
+            const filename = file instanceof File ? file.name : filePath.split('/').pop() || filePath
+            const contentType = file instanceof File ? file.type || 'application/octet-stream' : 'application/octet-stream'
+
+            const response = await fetch(`${API_URL.replace(/\/$/, '')}/upload/upload`, {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+                ...buildAuthHeaders(),
+              },
+              body: JSON.stringify({
+                bucket,
+                filename,
+                content_type: contentType,
+                file_content: btoa(binary),
+              }),
+            })
+
+            const data = await response.json().catch(() => null)
+            if (!response.ok) {
+              return { data: null, error: data || { message: response.statusText, status: response.status } }
+            }
+
+            return { data, error: null }
+          } catch (error: any) {
+            return { data: null, error: { message: error.message || 'Upload failed' } }
+          }
+        },
+
+        getPublicUrl(filePath: string) {
+          return {
+            data: {
+              publicUrl: filePath.startsWith('http')
+                ? filePath
+                : `${API_URL.replace(/\/$/, '')}/upload/public/${encodeURIComponent(bucket)}/${encodeURIComponent(filePath)}`,
+            },
+          }
+        },
+      }
+    },
+  },
 }
 
 // Lightweight auth proxy to backend auth endpoints so frontend code using
@@ -220,4 +284,4 @@ export const auth = {
 }
 
 // Keep default export for compatibility
-export default { supabase, auth }
+export default { api, auth }

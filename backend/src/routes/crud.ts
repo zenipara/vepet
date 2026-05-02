@@ -17,6 +17,16 @@ const tableRoutes = [
   { path: 'notifications', tableName: 'notifications' },
   { path: 'profiles', tableName: 'profiles' },
   { path: 'vendors', tableName: 'vendors' },
+  { path: 'treatments', tableName: 'treatments' },
+  { path: 'prescriptions', tableName: 'prescriptions' },
+  { path: 'inpatient_cases', tableName: 'inpatient_cases' },
+  { path: 'case_updates', tableName: 'case_updates' },
+  { path: 'case_photos', tableName: 'case_photos' },
+  { path: 'clinic_profile', tableName: 'clinic_profile' },
+  { path: 'public_pages', tableName: 'public_pages' },
+  { path: 'feature_flags', tableName: 'feature_flags' },
+  { path: 'blog_posts', tableName: 'blog_posts' },
+  { path: 'testimonials', tableName: 'testimonials' },
 ] as const;
 
 for (const { path, tableName } of tableRoutes) {

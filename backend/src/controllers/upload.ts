@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 import dotenv from 'dotenv';
 import { AuthRequest } from '../middleware/auth.js';
 
@@ -14,6 +16,28 @@ const s3Client = new S3Client({
   },
   endpoint: process.env.R2_ENDPOINT || '',
 });
+
+function hasR2Config() {
+  return Boolean(
+    process.env.CLOUDFLARE_R2_ACCESS_KEY &&
+      process.env.CLOUDFLARE_R2_SECRET_KEY &&
+      process.env.R2_ENDPOINT
+  );
+}
+
+async function saveLocalUpload(userId: string, filename: string, fileContent: string) {
+  const uploadsDir = path.join(process.cwd(), 'uploads', userId);
+  await mkdir(uploadsDir, { recursive: true });
+
+  const key = `${userId}/${Date.now()}-${filename}`;
+  const filePath = path.join(process.cwd(), 'uploads', key);
+  await writeFile(filePath, Buffer.from(fileContent, 'base64'));
+
+  return {
+    object_key: key,
+    public_url: `/uploads/${key}`,
+  };
+}
 
 /**
  * Generate a signed URL for direct upload to R2
@@ -33,6 +57,15 @@ export async function getSignedUploadUrl(req: AuthRequest, res: Response) {
 
     // Generate unique key with user_id and timestamp
     const key = `${req.user.user_id}/${Date.now()}-${filename}`;
+
+    if (!hasR2Config()) {
+      return res.json({
+        signed_url: null,
+        url_expiry: 3600,
+        object_key: key,
+        public_url: `/uploads/${key}`,
+      });
+    }
 
     const command = new PutObjectCommand({
       Bucket: process.env.R2_BUCKET_NAME || 'vetcare-uploads',
@@ -72,6 +105,11 @@ export async function uploadFile(req: AuthRequest, res: Response) {
     }
 
     const key = `${req.user.user_id}/${Date.now()}-${filename}`;
+
+    if (!hasR2Config()) {
+      const localResult = await saveLocalUpload(req.user.user_id, filename, file_content);
+      return res.json(localResult);
+    }
 
     const command = new PutObjectCommand({
       Bucket: process.env.R2_BUCKET_NAME || 'vetcare-uploads',

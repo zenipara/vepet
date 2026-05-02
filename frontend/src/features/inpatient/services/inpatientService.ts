@@ -69,16 +69,13 @@ export const inpatientService = {
     const fileName = `${caseId}/${Date.now()}_${file.name}`
 
     // Upload file
-    const { error: uploadError } = await api.storage
+    const { data: uploadData, error: uploadError } = await api.storage
       .from('case-photos')
       .upload(fileName, file)
 
     if (uploadError) throw uploadError
 
-    const { data } = supabase
-      .storage
-      .from('case-photos')
-      .getPublicUrl(fileName)
+    const publicUrl = uploadData?.public_url || uploadData?.publicUrl || api.storage.from('case-photos').getPublicUrl(fileName).data.publicUrl
 
     // Save photo record
     const { data: photoRecord, error: saveError } = await supabase
@@ -86,7 +83,7 @@ export const inpatientService = {
       .insert({
         case_id: caseId,
         uploader_id: user?.user?.id,
-        photo_url: data.publicUrl,
+        photo_url: publicUrl,
         caption,
       })
       .select()
