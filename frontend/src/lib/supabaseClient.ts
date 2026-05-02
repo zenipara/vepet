@@ -91,6 +91,11 @@ class Query {
         return { data: null, error: { message: data?.message || resp.statusText, status: resp.status } }
       }
 
+      // Unwrap backend response envelope { data: [...] }
+      if (data && typeof data === 'object' && 'data' in data && !Array.isArray(data)) {
+        data = data.data
+      }
+
       // When single() used but response is array, pick first
       if (this.singleFlag && Array.isArray(data)) data = data[0] || null
 
@@ -149,7 +154,8 @@ export const auth = {
   async signUp({ email, password, options }: any) {
     try {
       const body: any = { email, password }
-      if (options?.data) body.userData = options.data
+      // Merge userData fields directly into body (e.g., full_name)
+      if (options?.data) Object.assign(body, options.data)
       const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/sign-up`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -175,10 +181,33 @@ export const auth = {
 
   async getUser() {
     try {
-      const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/me`, { method: 'GET' })
+      // Try to get token from sessionStorage/localStorage if available
+      let token = null
+      if (typeof window !== 'undefined') {
+        token = window.localStorage?.getItem('vetcare_token') || 
+                window.sessionStorage?.getItem('vetcare_token')
+      }
+      
+      const headers: Record<string, string> = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      const res = await fetch(`${API_URL.replace(/\/$/, '')}/auth/me`, { 
+        method: 'GET',
+        headers 
+      })
+      
       const data = await res.json().catch(() => null)
-      if (!res.ok) return { data: null, error: data || { message: res.statusText } }
-      return { data, error: null }
+      if (!res.ok) {
+        return { 
+          data: null, 
+          error: data || { message: res.statusText } 
+        }
+      }
+      
+      // Backend returns { user: {...} }, so unwrap it
+      return { data: data?.user || data, error: null }
     } catch (err: any) {
       return { data: null, error: { message: err.message } }
     }
