@@ -5,9 +5,11 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-esm src/server.ts",
+    "dev": "tsc && node dist/server.js",
+    "dev:watch": "tsc --watch & node dist/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
+    "test": "./test-api.sh",
     "seed": "ts-node-esm scripts/seed.ts"
   },
   "dependencies": {
