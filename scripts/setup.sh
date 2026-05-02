@@ -27,7 +27,7 @@ fi
 if [ ! -f ".env.local" ]; then
   echo "Creating .env.local from template..."
   cp .env.example .env.local
-  echo "⚠️  Silakan edit .env.local dengan Supabase credentials Anda"
+  echo "⚠️  Silakan edit .env.local dengan API dan database credentials Anda"
 fi
 
 cd ..
@@ -38,14 +38,13 @@ echo ""
 echo "======================================"
 echo "🚀 Quick Start:"
 echo ""
-echo "1. Setup Supabase:"
-echo "   - Buka https://supabase.com dan buat project"
-echo "   - Copy Project URL dan Anon Key"
+echo "1. Setup API dan database:"
+echo "   - Siapkan DATABASE_URL untuk PostgreSQL"
 echo "   - Edit frontend/.env.local"
 echo ""
 echo "2. Run migrations:"
-echo "   - Copy isi supabase/migrations/*.sql ke Supabase Dashboard → SQL Editor"
-echo "   - Atau gunakan Supabase CLI: supabase db push"
+echo "   - Jalankan bash scripts/deploy-db.sh"
+echo "   - Atau jalankan psql terhadap database/migrations/*.sql"
 echo ""
 echo "3. Start development:"
 echo "   cd frontend && npm run dev"

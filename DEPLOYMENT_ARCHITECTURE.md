@@ -52,7 +52,7 @@ VetCare is a veterinary clinic management system replacing Supabase with a custo
                        │ (Migrations)
                        │
               ┌─────────────────────────────────┐
-              │ supabase/migrations/*.sql       │
+              │ database/migrations/*.sql       │
               │ - Schema                        │
               │ - Functions & Triggers          │
               │ - RLS Policies                  │
@@ -75,7 +75,7 @@ VetCare is a veterinary clinic management system replacing Supabase with a custo
 - [ ] **Render.com Account**: Create account at https://render.com
 - [ ] **PostgreSQL Database**: Create managed Postgres instance
   - Get `DATABASE_URL` connection string
-  - Apply migrations: `psql "$DATABASE_URL" -f supabase/migrations/*.sql`
+  - Apply migrations: `psql "$DATABASE_URL" -f database/migrations/*.sql`
 - [ ] **Cloudflare R2**: Create account and S3 bucket
   - Get `CLOUDFLARE_R2_ACCESS_KEY`, `SECRET_KEY`, `ENDPOINT`
 
@@ -83,7 +83,7 @@ VetCare is a veterinary clinic management system replacing Supabase with a custo
 
 - [ ] **API Gateway** (Node.js)
   - Create Render Web Service (from `backend/` directory)
-  - Set environment variables (see [BACKEND_DEPLOYMENT_GUIDE.md](BACKEND_DEPLOYMENT_GUIDE.md))
+  - Set environment variables (see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md))
   - Deploy: `npm install && npm run build && npm start`
   - Test: `curl https://YOUR_API_URL/health`
 
@@ -134,20 +134,13 @@ GITHUB_PAGES=true
 
 ## 📚 Detailed Deployment Guides
 
-1. **[BACKEND_DEPLOYMENT_GUIDE.md](BACKEND_DEPLOYMENT_GUIDE.md)**
-   - Node.js API Gateway on Render
-   - PostgreSQL setup
-   - JWT configuration
+1. **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)**
+  - Unified backend, realtime, and frontend deployment steps
 
-2. **[REALTIME_DEPLOYMENT_GUIDE.md](REALTIME_DEPLOYMENT_GUIDE.md)**
-   - Go WebSocket Service on Render
-   - Testing WebSocket connections
-   - Integration with API Gateway
-
-3. **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
-   - Local development setup
-   - Database migrations
-   - Frontend environment
+2. **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
+  - Local development setup
+  - Database migrations
+  - Frontend environment
 
 ---
 
@@ -280,7 +273,7 @@ Visit: https://zenipara.github.io/VetCare/
 | Frontend | ✅ Ready | GitHub Pages |
 | API Gateway | ✅ Implemented | `backend/` |
 | Realtime Service | ✅ Implemented | `services/realtime/` |
-| Database Migrations | ✅ Ready | `supabase/migrations/` |
+| Database Migrations | ✅ Ready | `database/migrations/` |
 | Documentation | ✅ Complete | This file + guides |
 | JWT Auth | ✅ Implemented | `backend/src/utils/jwt.ts` |
 | R2 Upload | ✅ Implemented | `backend/src/controllers/upload.ts` |
@@ -348,10 +341,9 @@ Before going live:
 
 ## 📞 Support & Troubleshooting
 
-See individual deployment guides:
-- API Gateway issues → [BACKEND_DEPLOYMENT_GUIDE.md](BACKEND_DEPLOYMENT_GUIDE.md#troubleshooting)
-- Realtime issues → [REALTIME_DEPLOYMENT_GUIDE.md](REALTIME_DEPLOYMENT_GUIDE.md#troubleshooting)
-- Frontend issues → [SETUP_GUIDE.md](SETUP_GUIDE.md)
+See the canonical guides:
+- Deployment issues → [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
+- Local setup issues → [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
 ---
 

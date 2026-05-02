@@ -15,12 +15,12 @@ Pastikan `DATABASE_URL` mengarah ke instance Postgres tujuan.
 Contoh menggunakan `psql`:
 
 ```bash
-psql "$DATABASE_URL" -f supabase/migrations/001_initial_schema.sql
-psql "$DATABASE_URL" -f supabase/migrations/002_functions_and_triggers.sql
-psql "$DATABASE_URL" -f supabase/migrations/003_rls_policies.sql
+psql "$DATABASE_URL" -f database/migrations/001_initial_schema.sql
+psql "$DATABASE_URL" -f database/migrations/002_functions_and_triggers.sql
+psql "$DATABASE_URL" -f database/migrations/003_rls_policies.sql
 ```
 
-Jika diperlukan, jalankan seed: `scripts/run_seed.sh` atau `node scripts/seed.js`.
+Jika diperlukan, jalankan seed: `bash scripts/seed-db.sh`.
 
 ## 2. Backend (API Gateway) — ringkasan deployment
 1. Pastikan environment variables terpasang: `DATABASE_URL`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_R2_BUCKET`, `JWT_SECRET`, dll.

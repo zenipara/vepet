@@ -33,10 +33,10 @@ cp .env.example .env.local
 
 3. **Create database schema** (ensure PostgreSQL migrations have been applied)
 ```bash
-# Apply migrations from supabase/migrations/ to your Postgres instance
-psql "$DATABASE_URL" -f ../supabase/migrations/001_initial_schema.sql
-psql "$DATABASE_URL" -f ../supabase/migrations/002_functions_and_triggers.sql
-psql "$DATABASE_URL" -f ../supabase/migrations/003_rls_policies.sql
+# Apply migrations from database/migrations/ to your Postgres instance
+psql "$DATABASE_URL" -f ../database/migrations/001_initial_schema.sql
+psql "$DATABASE_URL" -f ../database/migrations/002_functions_and_triggers.sql
+psql "$DATABASE_URL" -f ../database/migrations/003_rls_policies.sql
 ```
 
 4. **Start development server**

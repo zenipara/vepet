@@ -10,7 +10,7 @@
     "lint": "eslint src --ext ts,tsx",
     "type-check": "tsc --noEmit",
     "format": "prettier --write src/",
-    "seed": "node ../scripts/seed.js"
+    "seed": "bash ../scripts/seed-db.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
