@@ -50,3 +50,40 @@ Jika diperlukan, jalankan seed: `bash scripts/seed-db.sh`.
 
 ---
 Jika Anda memerlukan langkah lebih rinci untuk bagian tertentu (mis. konfigurasi Cloudflare R2, setup Render, atau workflow GitHub Actions), lihat file-file folder spesifik seperti `backend/README.md` dan `services/realtime/README.md`.
+
+## Next Steps (Consolidated)
+
+Untuk mempercepat deployment, berikut ringkasan tindakan yang disarankan dan urutan prioritas:
+
+1. Infrastruktur
+   - Buat instance PostgreSQL di Render atau layanan pilihan Anda; catat `DATABASE_URL`.
+   - (Opsional) Buat bucket Cloudflare R2; catat Access Key, Secret, dan Account ID.
+
+2. Migrations & Seed
+   - Terapkan migrations berurutan:
+     ```bash
+     psql "$DATABASE_URL" -f database/migrations/001_initial_schema.sql
+     psql "$DATABASE_URL" -f database/migrations/002_functions_and_triggers.sql
+     psql "$DATABASE_URL" -f database/migrations/003_rls_policies.sql
+     ```
+   - (Opsional) Jalankan seed: `bash scripts/seed-db.sh` atau `psql "$DATABASE_URL" -f database/seed.sql`
+
+3. Deploy Backend
+   - Buat Web Service di Render, arahkan ke `backend/`.
+   - Build: `npm install && npm run build`; Start: `npm start`.
+   - Tambahkan environment variables (lihat `backend/.env.example`).
+
+4. Deploy Realtime
+   - Buat Background Worker di Render, arahkan ke `services/realtime/`.
+   - Build: `go mod download && go build -o main .`; Start: `./main`.
+
+5. Deploy Frontend
+   - Tambahkan GitHub Actions secrets: `VITE_API_URL`, `VITE_WS_URL`, dsb.
+   - Push ke `main` untuk memicu deployment ke GitHub Pages.
+
+6. Verifikasi
+   - Jalankan `bash verify-predeployment.sh` secara lokal untuk cek file & skrip.
+   - Uji health endpoint: `curl https://YOUR_API_URL/health`.
+   - Uji alur utama: registrasi, login, CRUD, upload, koneksi WebSocket.
+
+Jika Anda ingin saya juga menghapus atau mengarsipkan file dokumentasi lain yang Anda anggap duplikat, beri tahu file mana; saya akan mengarsipkannya ke `docs/archive/` dan memperbarui referensi yang relevan.
