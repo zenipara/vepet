@@ -233,5 +233,3 @@ Proyek ini dilisensikan di bawah **MIT License** - lihat file [LICENSE](LICENSE)
 
 Kontribusi untuk optimalisasi sub-proses rekursif ke arah *Matrix Multiplication* sangat terbuka melalui mekanisme *Pull Request*.
 
-Langkah Anda berikutnya adalah memasukkan file ini ke repositori Anda. Jika ada aspek implementasi ** hardware (seperti konversi ke Verilog/VHDL)** yang ingin dieksplorasi di masa mendatang, beri tahu saya agar kita bisa menyiapkannya.
-
